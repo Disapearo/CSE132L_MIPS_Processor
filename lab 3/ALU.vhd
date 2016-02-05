@@ -1,4 +1,3 @@
--- Jump, JR, JAL, JALR not done yet, unless they are simply being passed to Add/AddI
 LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
 USE IEEE.numeric_std.ALL;
@@ -17,8 +16,8 @@ ARCHITECTURE arch OF alu IS
 
 	COMPONENT Comparator IS
 		PORT (In1, In2 : IN STD_LOGIC_VECTOR (31 DOWNTO 0);
-			SLTS, SLTU : OUT STD_LOGIC_VECTOR (31 DOWNTO 0);
-			BLZ, BGEZ, BE, BNE, BLEZ, BGZ : OUT STD_LOGIC);
+			SLTS, SLTU : OUT STD_LOGIC_VECTOR (31 DOWNTO 0));
+--			BLZ, BGEZ, BE, BNE, BLEZ, BGZ : OUT STD_LOGIC);
 	END COMPONENT;
 
 	SIGNAL CSLTS : STD_LOGIC_VECTOR (31 DOWNTO 0);
@@ -27,7 +26,7 @@ ARCHITECTURE arch OF alu IS
 
 BEGIN
 
-	C1: Comparator PORT MAP (A_in, B_in, CSLTS, CSLTU, CBLZ, CBGEZ, CBE, CBNE, CBLEZ, CBGZ);
+	C1: Comparator PORT MAP (A_in, B_in, CSLTS, CSLTU);--, CBLZ, CBGEZ, CBE, CBNE, CBLEZ, CBGZ);
 
 	O_out <= STD_LOGIC_VECTOR(signed(A_in) + signed(B_in)) WHEN Func_in = "100000" ELSE					-- ADD/ADDI (OPCODE = "001000") LW (OPCODE = "100011"), SW (OPCODE = "101011")
 		STD_LOGIC_VECTOR(unsigned(A_in) + unsigned(B_in)) WHEN Func_in = "100001" ELSE					-- ADDU/ADDIU (OPCODE = "001001")

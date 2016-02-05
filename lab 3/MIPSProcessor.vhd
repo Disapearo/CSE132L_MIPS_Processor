@@ -19,12 +19,12 @@ ARCHITECTURE arch OF processor IS
 		GENERIC(addr_size : INTEGER := 32);
 		PORT (oldcounter: IN STD_LOGIC_VECTOR(addr_size - 1 DOWNTO 0);
 			inc: IN STD_LOGIC_VECTOR(addr_size - 1 DOWNTO 0);
-				newcounter: : OUT STD_LOGIC_VECTOR(addr_size - 1 DOWNTO 0);
+				newcounter: OUT STD_LOGIC_VECTOR(addr_size - 1 DOWNTO 0));
 	END COMPONENT;
 
 	COMPONENT controller IS
 		PORT (Funct, OpCode : IN STD_LOGIC_VECTOR (5 DOWNTO 0);
-			MemtoReg, MemWrite, Branch, Jump, ALUSrc, RegDest, RegWrite : OUT STD_LOGIC;
+			MemtoReg, MemWrite, Branch, ALUSrc, RegDest, RegWrite, JumpOut : OUT STD_LOGIC;
 			ALUControl : OUT STD_LOGIC_VECTOR (5 DOWNTO 0);
 			dsize : OUT STD_LOGIC_VECTOR (2 DOWNTO 0));
 	END COMPONENT;
@@ -69,14 +69,14 @@ ARCHITECTURE arch OF processor IS
 			dataO 	: OUT std_logic_vector (31 DOWNTO 0));	
 	END COMPONENT;
 
-	SIGNAL Instr_Addr: STD_LOGIC_VECTOR (5 DOWNTO 0);
+	SIGNAL Instr_Addr: STD_LOGIC_VECTOR (31 DOWNTO 0);
 
 	SIGNAL Instr : STD_LOGIC_VECTOR (31 DOWNTO 0);
 	SIGNAL OpCode, Funct : STD_LOGIC_VECTOR (5 DOWNTO 0);
 	SIGNAL RS, RT, RD, SHAMT : STD_LOGIC_VECTOR (4 DOWNTO 0);
 	SIGNAL BitImmediate_16 : STD_LOGIC_VECTOR (15 DOWNTO 0);
 
-	SIGNAL MemtoReg, MemWrite, Branch, ALUSrc, RegDest, RegWrite : STD_LOGIC;
+	SIGNAL MemtoReg, MemWrite, Branch, ALUSrc, RegDest, RegWrite, JumpOut : STD_LOGIC;
 	SIGNAL ALUControl : STD_LOGIC_VECTOR (5 DOWNTO 0);
 	SIGNAL dsize : STD_LOGIC_VECTOR (2 DOWNTO 0);
 
@@ -87,17 +87,19 @@ ARCHITECTURE arch OF processor IS
 
 	SIGNAL BranchOut : STD_LOGIC;
 
-	SIGNAL ShiftLeft,shiftleft_im : STD_LOGIC_VECTOR (27 DOWNTO 0);
+	SIGNAL ShiftLeft : STD_LOGIC_VECTOR (27 DOWNTO 0);
+	SIGNAL shiftleft_im : STD_LOGIC_VECTOR (31 DOWNTO 0);
+	SIGNAL AddALU_Result : STD_LOGIC_VECTOR (31 DOWNTO 0);
 	
 	SIGNAL JumpAddress : STD_LOGIC_VECTOR (31 DOWNTO 0);
 
 	-- NEW -- TODO: Organize this
-	SIGNAL New_PC : STD_LOGIC_VECTOR (31 DOWNTO 0);
+	SIGNAL New_PC, pc4 : STD_LOGIC_VECTOR (31 DOWNTO 0);
 
 BEGIN
 	ProgCnt : PC PORT MAP(ref_clk, New_PC, Instr_Addr); -- TODO: Connect New_PC to Branch/Jump datapath
 -- Instruction Memory
-	IMEM_1 : imem PORT MAP(Instr_Addr, Instr);			--NOR Reg(0) & Reg(1) into Reg(2)
+	IMEM_1 : imem PORT MAP(Instr_Addr(5 DOWNTO 0), Instr);			--NOR Reg(0) & Reg(1) into Reg(2)
 -- Instruction Breakdown
 	OpCode <= Instr(31 DOWNTO 26);
 	RS <= Instr(25 DOWNTO 21);
@@ -107,7 +109,7 @@ BEGIN
 	Funct <= Instr(5 DOWNTO 0);
 	BitImmediate_16 <= Instr(15 DOWNTO 0);
 -- Controller
-	C1: controller PORT MAP(Funct, OpCode, MemtoReg, MemWrite, Branch, Jump, ALUSrc, RegDest, RegWrite, ALUControl, dsize);
+	C1: controller PORT MAP(Funct, OpCode, MemtoReg, MemWrite, Branch, ALUSrc, RegDest, RegWrite, JumpOut, ALUControl, dsize);
 
 ------ INSTRUCTION DATAPATH
 -- Multiplexor 1
@@ -140,8 +142,8 @@ BEGIN
 	mux3out <= ALUresult WHEN (MemtoReg = '0') ELSE
 		WriteBack WHEN (MemtoReg = '1');
 --Multiplexor 4
-	mux4out <= JumpAdress WHEN (Jump = '1') ELSE
-		mux3out WHEN (Jump = '0');
+	mux4out <= JumpAddress WHEN (JumpOut = '1') ELSE
+		mux3out WHEN (JumpOut = '0');
 
 ------ BRANCH/JUMP DATAPATH
 -- PC Adder
@@ -152,16 +154,13 @@ BEGIN
 -- Normal Adder
 	NormAdder: adder
 		GENERIC MAP(32)
-		PORT MAP(pc4,shiftleft_im,branch_out);
+		PORT MAP(pc4,shiftleft_im,AddALU_Result);
 
 -- Shift Left 2
-	shiftleft <= Instr(25 DOWNTO 0) sll 2;
-
--- Shift Left 2 immediate
-	shiftleft_im <= new_immed sll 2;
-
-
+	shiftleft <= Instr(25 DOWNTO 0) & "00"; --TO_STDLOGICVECTOR(TO_BITVECTOR(Instr(25 DOWNTO 0)) sll 2);
+-- Shift Left 2 Immediate
+	shiftleft_im <= TO_STDLOGICVECTOR(TO_BITVECTOR(new_immed) sll 2);
 --Jump Adress
-	JumpAddress <= Instr_Addr(31 DOWNTO 28) && shiftleft;
+	JumpAddress <= Instr_Addr(31 DOWNTO 28) & shiftleft;
 
 END arch;

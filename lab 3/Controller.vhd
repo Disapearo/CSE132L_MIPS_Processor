@@ -52,7 +52,7 @@ BEGIN
 			MemtoReg 	<= '0';
 			ALUControl 	<= Funct;
 			Branch 		<= '0';
-			IF (Funct = "001001" or Funct = "001000") --Jump and Link Register, Jump Return
+			IF (Funct = "001001" or Funct = "001000") THEN --Jump and Link Register, Jump Return
 				JumpOut <= '1';
 			ELSE
 				JumpOut <= '0';
@@ -61,7 +61,7 @@ BEGIN
 		ELSIF (ITYPE = '1') THEN
 			RegDest 	<= '0';
 			ALUSrc 		<= '1';
-			Jump 		<= '0';
+			JumpOut 	<= '0';
 			IF (OpCode (5 DOWNTO 3) = "100") THEN -- Load Instruction
 				RegWrite 	<= '1';
 				MemtoReg 	<= '1';
