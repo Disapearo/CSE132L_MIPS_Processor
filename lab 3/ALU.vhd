@@ -44,12 +44,12 @@ BEGIN
 		TO_STDLOGICVECTOR(TO_BITVECTOR(A_in) SRA TO_INTEGER(SIGNED(B_in))) WHEN Func_in = "000100" ELSE			-- SLLV
 		TO_STDLOGICVECTOR(TO_BITVECTOR(A_in) SLL TO_INTEGER(SIGNED(B_in))) WHEN Func_in = "000110" ELSE			-- SRLV
 		TO_STDLOGICVECTOR(TO_BITVECTOR(A_in) SRL TO_INTEGER(SIGNED(B_in))) WHEN Func_in = "000111" ELSE			-- SRAV
-		CBLZ WHEN Func_in = "000001" ELSE										-- BLZ
-		CBGEZ WHEN Func_in = "000001" ELSE										-- BGEZ
-		CBEQ WHEN Func_in = "000100" ELSE										-- BEQ
-		CBNE WHEN Func_in = "000101" ELSE										-- BNE
-		CBLEZ WHEN Func_in = "000110" ELSE										-- BLEZ
-		CBGZ WHEN Func_in = "000111" ;											-- BGZ
+		CBLZ WHEN Func_in = "110001" ELSE										-- BLZ (OPCODE = "000001")
+		CBGEZ WHEN Func_in = "110001" ELSE										-- BGEZ (OPCODE = "000001")
+		CBEQ WHEN Func_in = "110100" ELSE										-- BEQ (OPCODE = "000100")
+		CBNE WHEN Func_in = "110101" ELSE										-- BNE (OPCODE = "000101")
+		CBLEZ WHEN Func_in = "110110" ELSE										-- BLEZ (OPCODE = "000110")
+		CBGZ WHEN Func_in = "110111" ;											-- BGZ (OPCODE = "000111")
 
 
 	Branch_out <= '1' WHEN (Func_in = "000001" OR Func_in = "000100" OR Func_in = "000101" OR Func_in = "000110" OR Func_in = "000111") ELSE '0';
