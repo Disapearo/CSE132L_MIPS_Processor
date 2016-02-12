@@ -23,46 +23,48 @@ ARCHITECTURE arch OF controller IS
 
 BEGIN
 
-	MemtoReg <=  '0' WHEN (OpCode = "000000") ELSE									-- RType
-		     '0' WHEN (OpCode = "000010" OR OpCode = "000011") ELSE						-- JType
-		     '1' WHEN (OpCode (5 DOWNTO 3) = "100") ELSE							-- LW
-		     '0' WHEN (OpCode (2 DOWNTO 0) = "101" OR OpCode = "000100" OR OpCode = "000101" OR OpCode = "000001" OR OpCode = "000110" OR OpCode = "000111"); 	-- SW and Branch
+	MemtoReg <=  '0' WHEN (OpCode = "000000") ELSE													-- RType
+		     '0' WHEN (OpCode = "000010" OR OpCode = "000011") ELSE										-- JType
+		     '1' WHEN (OpCode = "100011" OR OpCode = "100000" OR OpCode = "100001") ELSE						-- LW, LB, LH
+		     '0' WHEN (OpCode = "101011" OR OpCode = "101000" OR OpCode = "101001") ELSE	 					-- SW, SB, SH
+		     '0' WHEN (OpCode = "000100" OR OpCode = "000101" OR OpCode = "000001" OR OpCode = "000110" OR OpCode = "000111"); 			-- Branch
 
-	MemWrite <=  '0' WHEN (OpCode = "000000") ELSE									-- RType
-		     '0' WHEN (OpCode = "000010" OR OpCode = "000011") ELSE						-- JType
-		     '0' WHEN (OpCode (5 DOWNTO 3) = "100" OR OpCode = "000100" OR OpCode = "000101" OR OpCode = "000001" OR OpCode = "000110" OR OpCode = "000111") ELSE	-- LW
-		     '1' WHEN (OpCode (2 DOWNTO 0) = "101"); 								-- SW
+	MemWrite <=  '0' WHEN (OpCode = "000000") ELSE													-- RType
+		     '0' WHEN (OpCode = "000010" OR OpCode = "000011") ELSE										-- JType
+		     '0' WHEN (OpCode = "100011" OR OpCode = "100000" OR OpCode = "100001") ELSE						-- LW, LB, LH
+		     '1' WHEN (OpCode = "101011" OR OpCode = "101000" OR OpCode = "101001") ELSE	 					-- SW, SB, SH
+		     '0' WHEN (OpCode = "000100" OR OpCode = "000101" OR OpCode = "000001" OR OpCode = "000110" OR OpCode = "000111");			-- Branch
 
-	Branch <=    '1' WHEN (OpCode = "000100" OR OpCode = "000101" OR OpCode = "000001" OR OpCode = "000110" OR OpCode = "000111") ELSE '0';				-- Branch
+	Branch <=    '1' WHEN (OpCode = "000100" OR OpCode = "000101" OR OpCode = "000001" OR OpCode = "000110" OR OpCode = "000111") ELSE '0';		-- Branch
 
-	ALUSrc <=    '0' WHEN (OpCode = "000000") ELSE									-- RType
-		     '0' WHEN (OpCode = "000010" OR OpCode = "000011") ELSE						-- JType
-		     '1';												-- IType
+	ALUSrc <=    '0' WHEN (OpCode = "000000") ELSE													-- RType
+		     '0' WHEN (OpCode = "000010" OR OpCode = "000011") ELSE										-- JType
+		     '1';																-- IType
 
-	RegDest <=   '1' WHEN (OpCode = "000000") ELSE									-- RType
-		     '0' WHEN (OpCode = "000010" OR OpCode = "000011") ELSE						-- JType
-		     '0';												-- IType
+	RegDest <=   '1' WHEN (OpCode = "000000") ELSE													-- RType
+		     '0' WHEN (OpCode = "000010" OR OpCode = "000011") ELSE										-- JType
+		     '0';																-- IType
 
-	RegWrite <=  '1' WHEN (OpCode = "000000") ELSE									-- RType
-		     '0' WHEN (OpCode = "000010" OR OpCode = "000011") ELSE						-- JType
-		     '1' WHEN (OpCode (5 DOWNTO 3) = "100") ELSE							-- LW
-		     '0' WHEN (OpCode (2 DOWNTO 0) = "101" OR OpCode = "000100" OR OpCode = "000101" OR OpCode = "000001" OR OpCode = "000110" OR OpCode = "000111");	-- SW
+	RegWrite <=  '1' WHEN (OpCode = "000000") ELSE													-- RType
+		     '0' WHEN (OpCode = "000010" OR OpCode = "000011") ELSE										-- JType
+		     '1' WHEN (OpCode = "100011" OR OpCode = "100000" OR OpCode = "100001") ELSE						-- LW, LB, LH
+		     '0' WHEN (OpCode = "101011" OR OpCode = "101000" OR OpCode = "101001") ELSE						-- SW, SB, SH
+		     '0' WHEN (OpCode = "000100" OR OpCode = "000101" OR OpCode = "000001" OR OpCode = "000110" OR OpCode = "000111");			-- Branch
 
+	JumpOut <=   '1' WHEN (OpCode = "000000" AND (Funct = "001001" OR Funct = "001000")) ELSE							-- RType, Funct = JALR or JR
+		     '0' WHEN (OpCode = "000000" AND (Funct /= "001001" OR Funct /= "001000")) ELSE							-- RType, Funct = JALR or JR
+		     '1' WHEN (OpCode = "000010" OR OpCode = "000011") ELSE										-- JType
+		     '0';																-- IType
 
-	JumpOut <=   '1' WHEN (OpCode = "000000" AND (Funct = "001001" OR Funct = "001000")) ELSE			-- RType, Funct = JALR or JR
-		     '0' WHEN (OpCode = "000000" AND (Funct /= "001001" OR Funct /= "001000")) ELSE			-- RType, Funct = JALR or JR
-		     '1' WHEN (OpCode = "000010" OR OpCode = "000011") ELSE						-- JType
-		     '0';												-- IType
-
-	ALUControl <= Funct WHEN (OpCode = "000000") ELSE								-- RType
-		      Funct WHEN (OpCode = "000010" OR OpCode = "000011") ELSE						-- JType
-		      "100000" WHEN (OpCode (5 DOWNTO 3) = "100" OR OpCode (2 DOWNTO 0) = "101") ELSE			-- LW or SW (Add)
-		      "110100" WHEN (OpCode = "000100") ELSE								-- BEQ
-		      "110101" WHEN (OpCode = "000101") ELSE								-- BNE
-		      "110001" WHEN (OpCode = "000001") ELSE								-- BLZ
-		      "110001" WHEN (OpCode = "000001") ELSE								-- BGEZ
-		      "110110" WHEN (OpCode = "000110") ELSE								-- BLEZ
-		      "110111" WHEN (OpCode = "000111");								-- BGZ
+	ALUControl <= Funct WHEN (OpCode = "000000") ELSE												-- RType
+		      Funct WHEN (OpCode = "000010" OR OpCode = "000011") ELSE										-- JType
+		      "100000" WHEN (OpCode (5 DOWNTO 3) = "100" OR OpCode (2 DOWNTO 0) = "101") ELSE							-- LW or SW (Add)
+		      "110100" WHEN (OpCode = "000100") ELSE												-- BEQ
+		      "110101" WHEN (OpCode = "000101") ELSE												-- BNE
+		      "110001" WHEN (OpCode = "000001") ELSE												-- BLZ
+		      "110001" WHEN (OpCode = "000001") ELSE												-- BGEZ
+		      "110110" WHEN (OpCode = "000110") ELSE												-- BLEZ
+		      "110111" WHEN (OpCode = "000111");												-- BGZ
 
 	dsize <=      OpCode (2 DOWNTO 0);
 
