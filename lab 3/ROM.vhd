@@ -26,7 +26,7 @@ BEGIN
 		END LOOP;
 
 		index := 0;
-		FILE_OPEN (mem_file, "imem.h", READ_MODE);
+		FILE_OPEN (mem_file, "verif/imem.h", READ_MODE);
 
 		WHILE NOT ENDFILE(mem_file) LOOP
 			READLINE(mem_file, L);

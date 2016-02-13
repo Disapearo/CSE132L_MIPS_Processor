@@ -10,9 +10,10 @@ END processor ;
 ARCHITECTURE arch OF processor IS
 
 	COMPONENT PC IS
-		PORT (clk: IN std_logic;
-			i:IN STD_LOGIC_VECTOR (31 DOWNTO 0);
-			o: OUT STD_LOGIC_VECTOR (31 DOWNTO 0));
+		PORT (clk: IN STD_LOGIC;
+			pc_reset : IN STD_LOGIC;
+			pc_in:IN STD_LOGIC_VECTOR (31 DOWNTO 0);
+			pc_out: OUT STD_LOGIC_VECTOR (31 DOWNTO 0));
 	END COMPONENT;
 	
 	COMPONENT adder IS
@@ -94,10 +95,11 @@ ARCHITECTURE arch OF processor IS
 	SIGNAL JumpAddress : STD_LOGIC_VECTOR (31 DOWNTO 0);
 
 	-- NEW -- TODO: Organize this
-	SIGNAL New_PC, pc4 : STD_LOGIC_VECTOR (31 DOWNTO 0);
+	SIGNAL New_PC : STD_LOGIC_VECTOR (31 DOWNTO 0) := X"00000000";-- (OTHERS => '0'); -- Initialize to PC = 0
+	SIGNAL pc4 : STD_LOGIC_VECTOR (31 DOWNTO 0);
 
 BEGIN
-	ProgCnt : PC PORT MAP(ref_clk, New_PC, Instr_Addr); -- TODO: Connect New_PC to Branch/Jump datapath
+	ProgCnt : PC PORT MAP(ref_clk, reset, New_PC, Instr_Addr); 		-- TODO: Connect New_PC to Branch/Jump datapath
 -- Instruction Memory
 	IMEM_1 : imem PORT MAP(Instr_Addr(5 DOWNTO 0), Instr);			--NOR Reg(0) & Reg(1) into Reg(2)
 -- Instruction Breakdown
@@ -149,7 +151,7 @@ BEGIN
 -- PC Adder
 	PCAdder: adder 
 		GENERIC MAP (32)
-		PORT MAP (Instr_Addr, "00000000000000000000000000000001", pc4); -- Pass a constant or change Paul's code?
+		PORT MAP (Instr_Addr, X"00000001", pc4); -- Pass a constant or change Paul's code?
 
 -- Normal Adder
 	NormAdder: adder
