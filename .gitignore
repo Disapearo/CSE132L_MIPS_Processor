@@ -1,0 +1,5 @@
+# Created to ignore files and directories created by Questasim
+./questa/*
+./modelsim.ini
+./simulation.log
+./transcript
