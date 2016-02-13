@@ -15,7 +15,7 @@ BEGIN
 	PROCESS (clk) -- Don't need asynchronous reset, so only sensitive to clk
 	BEGIN
 		IF (clk'EVENT and clk = '1') THEN
-			IF (pc_reset = 1) THEN
+			IF (pc_reset = '1') THEN
 				pc_out <= (OTHERS => '0'); -- Assumes iMem starts at 0
 			ELSE 
 				pc_out <= pc_in; -- Update the PC
