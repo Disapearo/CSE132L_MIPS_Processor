@@ -27,12 +27,12 @@ BEGIN
 			SLTU <= (OTHERS => '0');
 		END IF;
 
-		IF (In1 < "0") THEN
+		IF (In1 < X"00000000") THEN
 			BLZ <= (OTHERS => '1');
 			BGZ <= (OTHERS => '0');
 			BLEZ <= (OTHERS => '1');
 			BGEZ <= (OTHERS => '0');
-		ELSIF (IN1 > "0") THEN
+		ELSIF (IN1 > X"00000000") THEN
 			BLZ <= (OTHERS => '0');
 			BGZ <= (OTHERS => '1');
 			BLEZ <= (OTHERS => '0');

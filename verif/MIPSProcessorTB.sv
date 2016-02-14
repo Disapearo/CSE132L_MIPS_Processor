@@ -6,6 +6,14 @@ processor L1(.ref_clk(ref_clk), .reset(reset));
 
 initial begin
 
+/*	ref_clk = 1;		// Initial Reset
+	reset = 1;
+	#100
+
+	ref_clk = 0;
+	reset = 1;
+	#100
+*/
 	ref_clk = 1;		// 1
 	reset = 0;
 	#100;

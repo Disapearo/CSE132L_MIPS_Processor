@@ -3,7 +3,7 @@ USE ieee.std_logic_1164.ALL;
 
 ENTITY controller IS
 	PORT (Funct, OpCode : IN STD_LOGIC_VECTOR (5 DOWNTO 0);
-		MemtoReg, MemWrite, Branch, ALUSrc, RegDest, RegWrite, JumpOut : OUT STD_LOGIC;
+		MemtoReg, MemWrite, MemRead, Branch, ALUSrc, RegDest, RegWrite, JumpOut : OUT STD_LOGIC;
 		ALUControl : OUT STD_LOGIC_VECTOR (5 DOWNTO 0);
 		dsize : OUT STD_LOGIC_VECTOR (2 DOWNTO 0));
 END controller;
@@ -14,7 +14,7 @@ END controller;
 -- J-type instructions use OPCODEs 00001x
 -- (Just FYI) Coprocessor instructions use OPCODEs 0100xx 
 
--- * From Assignment Spec*
+-- * From Assignment Spec *
 -- R-type if OpCode = 000000
 -- I-type (Lw and Sw only) if OpCode = 100011 or 101011
 -- J-type OpCode is currently unknown
@@ -36,6 +36,13 @@ BEGIN
 		     '1' WHEN (OpCode = "101011" OR OpCode = "101000" OR OpCode = "101001") ELSE	 						-- SW, SB, SH
 		     '0' WHEN (OpCode = "000100" OR OpCode = "000101" OR OpCode = "000001" OR OpCode = "000110" OR OpCode = "000111") ELSE		-- Branch
 		     '0';																-- Everything else
+
+	MemRead	 <=  '0' WHEN (OpCode = "000000") ELSE                                                                                                  -- RType
+                     '0' WHEN (OpCode = "000010" OR OpCode = "000011") ELSE                                                                             -- JType
+                     '1' WHEN (OpCode = "100011" OR OpCode = "100000" OR OpCode = "100001" OR OpCode = "100100" OR OpCode = "100101") ELSE              -- LW, LB, LH, LBU, LHU
+                     '0' WHEN (OpCode = "101011" OR OpCode = "101000" OR OpCode = "101001") ELSE                                                        -- SW, SB, SH
+                     '0' WHEN (OpCode = "000100" OR OpCode = "000101" OR OpCode = "000001" OR OpCode = "000110" OR OpCode = "000111") ELSE              -- Branch
+                     '0'; 
 
 	Branch <=    '1' WHEN (OpCode = "000100" OR OpCode = "000101" OR OpCode = "000001" OR OpCode = "000110" OR OpCode = "000111") ELSE '0';		-- Branch
 

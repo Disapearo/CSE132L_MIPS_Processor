@@ -25,7 +25,7 @@ ARCHITECTURE arch OF processor IS
 
 	COMPONENT controller IS
 		PORT (Funct, OpCode : IN STD_LOGIC_VECTOR (5 DOWNTO 0);
-			MemtoReg, MemWrite, Branch, ALUSrc, RegDest, RegWrite, JumpOut : OUT STD_LOGIC;
+			MemtoReg, MemWrite, MemRead, Branch, ALUSrc, RegDest, RegWrite, JumpOut : OUT STD_LOGIC;
 			ALUControl : OUT STD_LOGIC_VECTOR (5 DOWNTO 0);
 			dsize : OUT STD_LOGIC_VECTOR (2 DOWNTO 0));
 	END COMPONENT;
@@ -63,7 +63,7 @@ ARCHITECTURE arch OF processor IS
 	COMPONENT ram IS
 		GENERIC ( N : INTEGER := 32);
 		PORT (clk : IN std_logic ;
-			we : IN std_logic ;
+			we, re : IN std_logic ;
 			dsize : IN std_logic_vector (2 DOWNTO 0);
 			addr 	: IN std_logic_vector (31 DOWNTO 0);
 			dataI 	: IN std_logic_vector (31 DOWNTO 0);
@@ -77,7 +77,7 @@ ARCHITECTURE arch OF processor IS
 	SIGNAL RS, RT, RD, SHAMT : STD_LOGIC_VECTOR (4 DOWNTO 0);
 	SIGNAL BitImmediate_16 : STD_LOGIC_VECTOR (15 DOWNTO 0);
 
-	SIGNAL MemtoReg, MemWrite, Branch, ALUSrc, RegDest, RegWrite, JumpOut : STD_LOGIC;
+	SIGNAL MemtoReg, MemWrite, MemRead, Branch, ALUSrc, RegDest, RegWrite, JumpOut : STD_LOGIC;
 	SIGNAL ALUControl : STD_LOGIC_VECTOR (5 DOWNTO 0);
 	SIGNAL dsize : STD_LOGIC_VECTOR (2 DOWNTO 0);
 
@@ -111,7 +111,7 @@ BEGIN
 	Funct <= Instr(5 DOWNTO 0);
 	BitImmediate_16 <= Instr(15 DOWNTO 0);
 -- Controller
-	C1: controller PORT MAP(Funct, OpCode, MemtoReg, MemWrite, Branch, ALUSrc, RegDest, RegWrite, JumpOut, ALUControl, dsize);
+	C1: controller PORT MAP(Funct, OpCode, MemtoReg, MemWrite, MemRead, Branch, ALUSrc, RegDest, RegWrite, JumpOut, ALUControl, dsize);
 
 ------ INSTRUCTION DATAPATH
 -- Multiplexor 1
@@ -139,13 +139,10 @@ BEGIN
 -- ALU
 	A1 : alu PORT MAP (ALUControl, SHAMT, RegOut1, mux2out, ALUresult, BranchOut);
 -- Data Memory
-	Ram1: ram PORT MAP (ref_clk, MemWrite, dsize, ALUresult, RegOut2, WriteBack);
+	Ram1: ram PORT MAP (ref_clk, MemWrite, MemRead, dsize, ALUresult, RegOut2, WriteBack);
 -- Multiplexor 3
 	mux3out <= ALUresult WHEN (MemtoReg = '0') ELSE
 		WriteBack WHEN (MemtoReg = '1');
---Multiplexor 4
-	mux4out <= JumpAddress WHEN (JumpOut = '1') ELSE
-		mux3out WHEN (JumpOut = '0');
 
 ------ BRANCH/JUMP DATAPATH
 -- PC Adder
@@ -164,5 +161,8 @@ BEGIN
 	shiftleft_im <= TO_STDLOGICVECTOR(TO_BITVECTOR(new_immed) sll 2);
 --Jump Adress
 	JumpAddress <= Instr_Addr(31 DOWNTO 28) & shiftleft;
+--Multiplexor 4
+	mux4out <= JumpAddress WHEN (JumpOut = '1') ELSE
+		mux3out WHEN (JumpOut = '0');
 
 END arch;
