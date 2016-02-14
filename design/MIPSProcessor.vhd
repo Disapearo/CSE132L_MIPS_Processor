@@ -81,10 +81,10 @@ ARCHITECTURE arch OF processor IS
 	SIGNAL ALUControl : STD_LOGIC_VECTOR (5 DOWNTO 0);
 	SIGNAL dsize : STD_LOGIC_VECTOR (2 DOWNTO 0);
 
-	SIGNAL mux1out : STD_LOGIC_VECTOR (4 DOWNTO 0);
-	SIGNAL mux2out, mux3out, mux4out, new_immed : STD_LOGIC_VECTOR (31 DOWNTO 0);
+	SIGNAL RegDest_Mux : STD_LOGIC_VECTOR (4 DOWNTO 0);
+	SIGNAL ALUSrc_Mux, MemtoReg_Mux, Branch_Mux, new_immed : STD_LOGIC_VECTOR (31 DOWNTO 0);
 
-	SIGNAL RegOut1, RegOut2, WriteBack, ALUresult : STD_LOGIC_VECTOR (31 DOWNTO 0);
+	SIGNAL RegOut1, RegOut2, ALUresult, WriteBack : STD_LOGIC_VECTOR (31 DOWNTO 0);
 
 	SIGNAL BranchOut : STD_LOGIC;
 
@@ -95,8 +95,9 @@ ARCHITECTURE arch OF processor IS
 	SIGNAL JumpAddress : STD_LOGIC_VECTOR (31 DOWNTO 0);
 
 	-- NEW -- TODO: Organize this
-	SIGNAL New_PC : STD_LOGIC_VECTOR (31 DOWNTO 0) := X"00000000";-- (OTHERS => '0'); -- Initialize to PC = 0
+	SIGNAL New_PC : STD_LOGIC_VECTOR (31 DOWNTO 0) := X"00000000"; -- Initialize to PC = 0
 	SIGNAL pc4 : STD_LOGIC_VECTOR (31 DOWNTO 0);
+	SIGNAL BranchAndGate : STD_LOGIC;
 
 BEGIN
 	ProgCnt : PC PORT MAP(ref_clk, reset, New_PC, Instr_Addr); 		-- TODO: Connect New_PC to Branch/Jump datapath
@@ -114,8 +115,8 @@ BEGIN
 	C1: controller PORT MAP(Funct, OpCode, MemtoReg, MemWrite, MemRead, Branch, ALUSrc, RegDest, RegWrite, JumpOut, ALUControl, dsize);
 
 ------ INSTRUCTION DATAPATH
--- Multiplexor 1
-	mux1out <= RT WHEN (RegDest = '0') ELSE
+-- RegDest Mux
+	RegDest_Mux <= RT WHEN (RegDest = '0') ELSE
 		RD WHEN (RegDest = '1');
 -- Sign Extend
 	Sign_Expand: FOR i IN 0 TO 31 GENERATE
@@ -132,16 +133,16 @@ BEGIN
 -- Register File
 	R1 : regfile
 		GENERIC MAP (32, 5)
-		PORT MAP (ref_clk, reset, RegWrite, RS, RT, mux1out, RegOut1, RegOut2, mux3out);
--- Multiplexor 2
-	mux2out <= RegOut2 WHEN (ALUSrc = '0') ELSE
+		PORT MAP (ref_clk, reset, RegWrite, RS, RT, RegDest_Mux, RegOut1, RegOut2, MemToReg_Mux);
+-- ALUSrc Mux
+	ALUSrc_Mux <= RegOut2 WHEN (ALUSrc = '0') ELSE
 		new_immed WHEN (ALUSrc = '1');
 -- ALU
-	A1 : alu PORT MAP (ALUControl, SHAMT, RegOut1, mux2out, ALUresult, BranchOut);
+	A1 : alu PORT MAP (ALUControl, SHAMT, RegOut1, ALUSrc_Mux, ALUresult, BranchOut);
 -- Data Memory
 	Ram1: ram PORT MAP (ref_clk, MemWrite, MemRead, dsize, ALUresult, RegOut2, WriteBack);
--- Multiplexor 3
-	mux3out <= ALUresult WHEN (MemtoReg = '0') ELSE
+-- MemToRegMux
+	MemToReg_Mux <= ALUresult WHEN (MemtoReg = '0') ELSE
 		WriteBack WHEN (MemtoReg = '1');
 
 ------ BRANCH/JUMP DATAPATH
@@ -161,8 +162,14 @@ BEGIN
 	shiftleft_im <= TO_STDLOGICVECTOR(TO_BITVECTOR(new_immed) sll 2);
 --Jump Adress
 	JumpAddress <= Instr_Addr(31 DOWNTO 28) & shiftleft;
---Multiplexor 4
-	mux4out <= JumpAddress WHEN (JumpOut = '1') ELSE
-		mux3out WHEN (JumpOut = '0');
+
+-- Branch And Gate
+	BranchAndGate <= BranchOut AND Branch;
+--Branch Mux
+	Branch_Mux <= AddALU_Result WHEN (BranchAndGate = '1') ELSE
+		      pc4 WHEN (BranchAndGate = '0');
+--Jump Mux
+	New_PC <= Branch_Mux WHEN (JumpOut = '0') ELSE
+		    JumpAddress WHEN (JumpOut = '1');
 
 END arch;
