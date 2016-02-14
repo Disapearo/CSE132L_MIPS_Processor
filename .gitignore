@@ -3,3 +3,9 @@
 ./modelsim.ini
 ./simulation.log
 ./transcript
+
+# Ignore directories and files used for synthesis in Synopsys
+./command.log
+./default.svf
+./MIPSProcessor_Synthesis/*
+./WORK/*
