@@ -35,6 +35,10 @@ ARCHITECTURE arch OF processor IS
 		rd: OUT STD_LOGIC_VECTOR(31 downto 0));
 	END COMPONENT;
 
+	COMPONENT synth_imem IS -- instruction memory (For Synthesis)
+		port(addr: IN STD_LOGIC_VECTOR(5 downto 0);
+		rd: OUT STD_LOGIC_VECTOR(31 downto 0));
+	END COMPONENT;
 
 	COMPONENT regfile IS
 		GENERIC ( NBIT : INTEGER := 32;
@@ -101,8 +105,9 @@ ARCHITECTURE arch OF processor IS
 
 BEGIN
 	ProgCnt : PC PORT MAP(ref_clk, reset, New_PC, Instr_Addr); 		-- TODO: Connect New_PC to Branch/Jump datapath
--- Instruction Memory
-	IMEM_1 : imem PORT MAP(Instr_Addr(5 DOWNTO 0), Instr);			--NOR Reg(0) & Reg(1) into Reg(2)
+-- Instruction Memory (Use either imem OR synth_imem, not both!)
+	--IMEM_1 : imem PORT MAP(Instr_Addr(5 DOWNTO 0), Instr);			--NOR Reg(0) & Reg(1) into Reg(2)
+	IMEM_1 : synth_imem PORT MAP(Instr_Addr(5 DOWNTO 0), Instr);	-- Synthesis version
 -- Instruction Breakdown
 	OpCode <= Instr(31 DOWNTO 26);
 	RS <= Instr(25 DOWNTO 21);
