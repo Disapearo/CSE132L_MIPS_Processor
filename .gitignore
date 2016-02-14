@@ -1,11 +1,11 @@
 # Created to ignore files and directories created by Questasim
-./questa/*
-./modelsim.ini
-./simulation.log
-./transcript
+questa/*
+modelsim.ini
+simulation.log
+transcript
 
 # Ignore directories and files used for synthesis in Synopsys
-./command.log
-./default.svf
-./MIPSProcessor_Synthesis/*
-./WORK/*
+command.log
+default.svf
+MIPSProcessor_Synthesis/*
+WORK/*
