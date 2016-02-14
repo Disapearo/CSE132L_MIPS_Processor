@@ -1,6 +1,6 @@
 LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
-USE IEEE.NUMERIC_STD_UNSIGNED.ALL;
+USE ieee.numeric_std.ALL;
 
 -- Use this version of Instruction Memory when synthesizing.
 -- The tested MIPS instructions have already been preloaded into memory.
@@ -11,10 +11,9 @@ entity synth_imem is -- instruction memory
 end;
 
 ARCHITECTURE arch OF synth_imem IS
-
 BEGIN
 
-	PROCESS
+	PROCESS (addr)
 		TYPE ramtype IS ARRAY (63 DOWNTO 0) OF STD_LOGIC_VECTOR(31 DOWNTO 0);
 		VARIABLE mem : ramtype := (OTHERS => (OTHERS => '0'));
 	BEGIN
@@ -38,11 +37,15 @@ BEGIN
 		mem(16) := X"20020001";
 		mem(17) := X"ac020054";
 
+		---- SYNTHESIS DOESN'T SUPPORT WAIT STATEMENTS FOR NON-CLOCK EVENTS!
 		-- Read memory
-		WAIT ON addr; -- Suspend process on first initialization
-		LOOP
-			rd <= mem(TO_INTEGER(addr));
-			WAIT ON addr;
-		END LOOP;
+		--WAIT ON addr; -- Suspend process on first initialization
+		--LOOP
+		--	rd <= mem(TO_INTEGER(unsigned(addr)));
+		--	WAIT ON addr;
+		--END LOOP;
+
+		rd <= mem(TO_INTEGER(unsigned(addr)));
+
 	END PROCESS;
 END arch;

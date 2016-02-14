@@ -1,13 +1,12 @@
 LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
 USE ieee.numeric_std.ALL;
---USE IEEE.STD_LOGIC_ARITH.ALL; -- No longer recommended (according to interwebz)
 USE IEEE.STD_LOGIC_UNSIGNED.ALL;
 
 ENTITY regfile IS
 	GENERIC ( NBIT : INTEGER := 32;
 		NSEL : INTEGER := 5);
-	PORT (clk 	: IN 	std_logic ;
+	PORT (ref_clk 	: IN 	std_logic ;
 		rst_s 	: IN 	std_logic ; -- synchronous reset
 		we 		: IN 	std_logic ; -- write enable
 		raddr_1 : IN 	std_logic_vector ( NSEL -1 DOWNTO 0); -- read address 1
@@ -25,10 +24,10 @@ ARCHITECTURE arch OF regfile IS
 	SIGNAL regarray : reg_file := (OTHERS => (OTHERS => '0'));
 
 BEGIN
-	PROCESS
+	PROCESS (ref_clk, rst_s, we, raddr_1, raddr_2, waddr) 
 	BEGIN
-		WAIT ON clk, rst_s, we, raddr_1, raddr_2, waddr;
-		IF (clk'EVENT and clk = '1') THEN
+		--WAIT ON ref_clk, rst_s, we, raddr_1, raddr_2, waddr; -- CAN'T SYNTHESIZE THIS!
+		IF (ref_clk'EVENT and ref_clk = '1') THEN
 			IF (rst_s = '1') THEN
 				regarray <= (OTHERS => (OTHERS => '0'));
 			ELSIF (we = '1') THEN
@@ -38,7 +37,6 @@ BEGIN
 
 		rdata_1 <= regarray(TO_INTEGER(UNSIGNED(raddr_1)));
 		rdata_2 <= regarray(TO_INTEGER(UNSIGNED(raddr_2)));
-		-- WAIT ON clk, rst_s, we, raddr_1, raddr_2, waddr;
 
 	END PROCESS;
 END arch;

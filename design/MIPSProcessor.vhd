@@ -2,7 +2,7 @@ LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
 
 ENTITY processor IS
-	PORT (ref_clk : IN std_logic ;
+	PORT (clk : IN std_logic ;
 		reset : IN std_logic );
 END processor ;
 
@@ -10,7 +10,7 @@ END processor ;
 ARCHITECTURE arch OF processor IS
 
 	COMPONENT PC IS
-		PORT (clk: IN STD_LOGIC;
+		PORT (ref_clk: IN STD_LOGIC;
 			pc_reset : IN STD_LOGIC;
 			pc_in:IN STD_LOGIC_VECTOR (31 DOWNTO 0);
 			pc_out: OUT STD_LOGIC_VECTOR (31 DOWNTO 0));
@@ -43,7 +43,7 @@ ARCHITECTURE arch OF processor IS
 	COMPONENT regfile IS
 		GENERIC ( NBIT : INTEGER := 32;
 			NSEL : INTEGER := 5);
-		PORT (clk : IN std_logic ;
+		PORT (ref_clk : IN std_logic ;
 			rst_s : IN std_logic ; -- synchronous reset
 			we : IN std_logic ; -- write enable
 			raddr_1 : IN std_logic_vector ( NSEL -1 DOWNTO 0); -- read address 1
@@ -66,7 +66,7 @@ ARCHITECTURE arch OF processor IS
 
 	COMPONENT ram IS
 		GENERIC ( N : INTEGER := 32);
-		PORT (clk : IN std_logic ;
+		PORT (ref_clk : IN std_logic ;
 			we, re : IN std_logic ;
 			dsize : IN std_logic_vector (2 DOWNTO 0);
 			addr 	: IN std_logic_vector (31 DOWNTO 0);
@@ -104,7 +104,7 @@ ARCHITECTURE arch OF processor IS
 	SIGNAL BranchAndGate : STD_LOGIC;
 
 BEGIN
-	ProgCnt : PC PORT MAP(ref_clk, reset, New_PC, Instr_Addr); 		-- TODO: Connect New_PC to Branch/Jump datapath
+	ProgCnt : PC PORT MAP(clk, reset, New_PC, Instr_Addr); 		-- TODO: Connect New_PC to Branch/Jump datapath
 -- Instruction Memory (Use either imem OR synth_imem, not both!)
 	--IMEM_1 : imem PORT MAP(Instr_Addr(5 DOWNTO 0), Instr);			--NOR Reg(0) & Reg(1) into Reg(2)
 	IMEM_1 : synth_imem PORT MAP(Instr_Addr(5 DOWNTO 0), Instr);	-- Synthesis version
@@ -138,14 +138,14 @@ BEGIN
 -- Register File
 	R1 : regfile
 		GENERIC MAP (32, 5)
-		PORT MAP (ref_clk, reset, RegWrite, RS, RT, RegDest_Mux, RegOut1, RegOut2, MemToReg_Mux);
+		PORT MAP (clk, reset, RegWrite, RS, RT, RegDest_Mux, RegOut1, RegOut2, MemToReg_Mux);
 -- ALUSrc Mux
 	ALUSrc_Mux <= RegOut2 WHEN (ALUSrc = '0') ELSE
 		new_immed WHEN (ALUSrc = '1');
 -- ALU
 	A1 : alu PORT MAP (ALUControl, SHAMT, RegOut1, ALUSrc_Mux, ALUresult, BranchOut);
 -- Data Memory
-	Ram1: ram PORT MAP (ref_clk, MemWrite, MemRead, dsize, ALUresult, RegOut2, WriteBack);
+	Ram1: ram PORT MAP (clk, MemWrite, MemRead, dsize, ALUresult, RegOut2, WriteBack);
 -- MemToRegMux
 	MemToReg_Mux <= ALUresult WHEN (MemtoReg = '0') ELSE
 		WriteBack WHEN (MemtoReg = '1');
