@@ -30,10 +30,10 @@ ARCHITECTURE arch OF processor IS
 			dsize : OUT STD_LOGIC_VECTOR (2 DOWNTO 0));
 	END COMPONENT;
 
-	COMPONENT imem IS -- instruction memory
-		port(addr: IN STD_LOGIC_VECTOR(5 downto 0);
-		rd: OUT STD_LOGIC_VECTOR(31 downto 0));
-	END COMPONENT;
+--	COMPONENT imem IS -- instruction memory
+--		port(addr: IN STD_LOGIC_VECTOR(5 downto 0);
+--		rd: OUT STD_LOGIC_VECTOR(31 downto 0));
+--	END COMPONENT;
 
 	COMPONENT synth_imem IS -- instruction memory (For Synthesis)
 		port(addr: IN STD_LOGIC_VECTOR(5 downto 0);
