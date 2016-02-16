@@ -1,0 +1,14 @@
+analyze -format vhdl { \
+mux.vhd \
+adder.vhd \
+signext.vhd \
+sll.vhd
+alu.vhd
+flop.vhd
+mdec.vhd
+mem.vhd
+regfile.vhd
+controller.vhd
+datapath.vhd
+mips.vhd
+}

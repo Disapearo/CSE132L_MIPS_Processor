@@ -30,12 +30,16 @@ BEGIN
 		     '0' WHEN (OpCode = "000100" OR OpCode = "000101" OR OpCode = "000001" OR OpCode = "000110" OR OpCode = "000111") ELSE		-- Branch
 		     '0';																-- Everything else
 
+--	MemtoReg <=  '1' WHEN (OpCode = "100011" OR OpCode = "100000" OR OpCode = "100001" OR OpCode = "100100" OR OpCode = "100101") ELSE '0';		-- Load
+
 	MemWrite <=  '0' WHEN (OpCode = "000000") ELSE													-- RType
 		     '0' WHEN (OpCode = "000010" OR OpCode = "000011") ELSE										-- JType
 		     '0' WHEN (OpCode = "100011" OR OpCode = "100000" OR OpCode = "100001" OR OpCode = "100100" OR OpCode = "100101") ELSE		-- LW, LB, LH, LBU, LHU
 		     '1' WHEN (OpCode = "101011" OR OpCode = "101000" OR OpCode = "101001") ELSE	 						-- SW, SB, SH
 		     '0' WHEN (OpCode = "000100" OR OpCode = "000101" OR OpCode = "000001" OR OpCode = "000110" OR OpCode = "000111") ELSE		-- Branch
 		     '0';																-- Everything else
+
+--	MemWrite <=  '1' WHEN (OpCode = "101011" OR OpCode = "101000" OR OpCode = "101001") ELSE '0';							-- Store
 
 	MemRead	 <=  '0' WHEN (OpCode = "000000") ELSE                                                                                                  -- RType
                      '0' WHEN (OpCode = "000010" OR OpCode = "000011") ELSE                                                                             -- JType
@@ -44,15 +48,21 @@ BEGIN
                      '0' WHEN (OpCode = "000100" OR OpCode = "000101" OR OpCode = "000001" OR OpCode = "000110" OR OpCode = "000111") ELSE              -- Branch
                      '0'; 
 
+--	MemRead <=   '1' WHEN (OpCode = "100011" OR OpCode = "100000" OR OpCode = "100001" OR OpCode = "100100" OR OpCode = "100101") ELSE '0';		-- Load
+
 	Branch <=    '1' WHEN (OpCode = "000100" OR OpCode = "000101" OR OpCode = "000001" OR OpCode = "000110" OR OpCode = "000111") ELSE '0';		-- Branch
 
 	ALUSrc <=    '0' WHEN (OpCode = "000000") ELSE													-- RType
 		     '0' WHEN (OpCode = "000010" OR OpCode = "000011") ELSE										-- JType
 		     '1';																-- IType
 
+--	ALUSrc <=    '0' WHEN (OpCode = "000000" OR OpCode = "000010" OR OpCode = "000011") ELSE '1';							-- RType or JType
+
 	RegDest <=   '1' WHEN (OpCode = "000000") ELSE													-- RType
 		     '0' WHEN (OpCode = "000010" OR OpCode = "000011") ELSE										-- JType
 		     '0';																-- IType
+
+--	RegDest <=   '1' WHEN (OpCode = "000000") ELSE '0';												-- RType
 
 	RegWrite <=  '1' WHEN (OpCode = "000000") ELSE													-- RType
 		     '0' WHEN (OpCode = "000010" OR OpCode = "000011") ELSE										-- JType
