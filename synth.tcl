@@ -7,7 +7,7 @@
 set PROJECT_NAME                "MIPSProcessor_Synthesis"
 set TOP                         "processor"
 set FILES                       "files_mips"
-set clock_period                2.0
+set clock_period                3.18
 
 #==============================================================================
 ##                  D I R E C T O R Y   S T R U C T U R E
@@ -142,7 +142,7 @@ redirect -tee -file ${REPORTS}/${TOP}.link.rpt  {link}
 #redirect -tee -file ${REPORTS}/${TOP}.uniquify.rpt { uniquify };
 
 
-redirect -tee -file ${REPORTS}/${TOP}.compile.rpt     { compile_ultra };
+redirect -tee -file ${REPORTS}/${TOP}.compile.rpt     { compile };
 
 
 #==============================================================================
@@ -178,7 +178,7 @@ exec rm -rf *.syn *.mr *.pvl
 
 
 
-exit
+#exit
 
 
 
