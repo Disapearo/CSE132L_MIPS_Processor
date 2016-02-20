@@ -9,3 +9,8 @@ command.log
 default.svf
 MIPSProcessor_Synthesis/*
 WORK/*
+alib-52/*
+
+
+# Ignore any misc. logs
+./*.log
