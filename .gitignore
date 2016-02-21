@@ -14,3 +14,6 @@ alib-52/*
 
 # Ignore any misc. logs
 ./*.log
+
+# Ignore .bak files in the Design folder
+design/*.bak
