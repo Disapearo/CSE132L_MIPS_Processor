@@ -71,12 +71,23 @@ For the most part, our testbench is the same as the one that we used for our Lab
 
 
 \section{Sample Program}
+\subsection{Instructions}
+We were given a list of 18 32-bit MIPS instructions, written in hexadecimal form. Before proceeding, we decoded these instructions into a human-readable format.
 
+\includegraphics[width=0.8\textwidth]{example_program_decoded_instructions.png}
+
+After decoding the instructions, we worked out the theoretical state of the Register File after every instruction. Of the two branch instructions in our sample program, one is successful and results in four instructions being skipped. There is also a jump instruction near the end of the program, which skips the final two instructions and moves the program counter into undefined memory, resulting in a "garbage" instruction. \\
+
+
+\includegraphics[width=0.8\textwidth]{example_program_registerfile_part1.png} \\ \\
+\includegraphics[width=0.25\textwidth]{example_program_registerfile_part2.png} 
 	
-	\subsection{Simulation Waveform}
-	\bfseries{Simulation Waveform is as follows:} \\ \\
-	\includegraphics[width=0.8\textwidth]{waveform_part1.png} \\ \\
-	\includegraphics[width=0.8\textwidth]{waveform_part2.png}
+\subsection{Simulation Waveform}
+\bfseries{After designing and testing our Processor, we generated the following waveforms:} \\ \\
+\includegraphics[width=0.8\textwidth]{waveform_part1.png} \\ \\
+\includegraphics[width=0.8\textwidth]{waveform_part2.png} \\
+
+As you can see, our branch and jump instructions worked as expected. Of the 18 instruction in the example program, only 12 were actually executed. We included a 13th cycle in our waveform to display the "garbage" instruction after our jump instruction.
 
 \section{Synthesis}
 Through synthesis, we were able to determine the power consumption, area requirements, and frequency of our processor design. Synopsis, a software suite provided by our university, was used to perform synthesis on our design. After adjusting the analysis, elaboration, and synthesis files and scripts, we synthesized our processor design and successfully generated various reports on our processor's performance.
@@ -91,7 +102,7 @@ After reading the generated area reports, we could not determine the units being
 According to the generated timing report, our Critical Path Length was 3.16 ns. In order to accommodate this and eliminate negative slack, we raised our clock period from 2.0 ns to 3.18 ns. This results in a frequency of approximately 314.5 MHz.
 
 \section{Known Issues} 
-For the instructions used for Questasim to simulate the processor that we designed, we used the same example instructions as last time for the testbench where we read line by line, one instruction at a time, from a file.  For synthesis, we created a second version of instruction memory that has instructions preloaded into memory in order to synthesize the Processor properly.
+Due to our unfamiliarity with SystemVerilog, we chose not to use the testbench to preload instruction memory. For the Questasim simulation, we read the example program instructions from a file.  For synthesis, we created a second version of instruction memory that has instructions preloaded into memory in order to synthesize the Processor properly.
 \\
 \section{Conclusion}
 
