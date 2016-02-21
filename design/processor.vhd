@@ -30,15 +30,15 @@ ARCHITECTURE arch OF processor IS
 			dsize : OUT STD_LOGIC_VECTOR (2 DOWNTO 0));
 	END COMPONENT;
 
---	COMPONENT imem IS -- instruction memory
---		port(addr: IN STD_LOGIC_VECTOR(5 downto 0);
---		rd: OUT STD_LOGIC_VECTOR(31 downto 0));
---	END COMPONENT;
-
-	COMPONENT synth_imem IS -- instruction memory (For Synthesis)
+	COMPONENT imem IS -- instruction memory
 		port(addr: IN STD_LOGIC_VECTOR(5 downto 0);
 		rd: OUT STD_LOGIC_VECTOR(31 downto 0));
 	END COMPONENT;
+
+--	COMPONENT synth_imem IS -- instruction memory (For Synthesis)
+--		port(addr: IN STD_LOGIC_VECTOR(5 downto 0);
+--		rd: OUT STD_LOGIC_VECTOR(31 downto 0));
+--	END COMPONENT;
 
 	COMPONENT regfile IS
 		GENERIC ( NBIT : INTEGER := 32;
@@ -61,25 +61,15 @@ ARCHITECTURE arch OF processor IS
 			B_in : IN std_logic_vector (31 DOWNTO 0);
 			O_out : OUT std_logic_vector (31 DOWNTO 0);
 			Branch_out : OUT std_logic );
---			Jump_out : OUT std_logic );
 	END COMPONENT;
 
---	COMPONENT ram IS
-----		GENERIC ( N : INTEGER := 32);
---		PORT (ref_clk : IN std_logic ;
---			we, re : IN std_logic ;
---			dsize : IN std_logic_vector (2 DOWNTO 0);
---			addr 	: IN std_logic_vector (31 DOWNTO 0);
---			dataI 	: IN std_logic_vector (31 DOWNTO 0);
---			dataO 	: OUT std_logic_vector (31 DOWNTO 0));	
---	END COMPONENT;
-
-
-	COMPONENT dmem IS
-		PORT(
-		ref_clk, we : IN std_logic;
-		a, wd: IN std_logic_vector (31 DOWNTO 0);
-		rd : OUT std_logic_vector (31 DOWNTO 0));
+	COMPONENT ram IS
+		PORT (ref_clk : IN std_logic ;
+			we, re : IN std_logic ;
+			dsize : IN std_logic_vector (2 DOWNTO 0);
+			addr 	: IN std_logic_vector (31 DOWNTO 0);
+			dataI 	: IN std_logic_vector (31 DOWNTO 0);
+			dataO 	: OUT std_logic_vector (31 DOWNTO 0));	
 	END COMPONENT;
 
 	SIGNAL Instr_Addr: STD_LOGIC_VECTOR (31 DOWNTO 0);
@@ -114,8 +104,8 @@ ARCHITECTURE arch OF processor IS
 BEGIN
 	ProgCnt : PC PORT MAP(clk, reset, New_PC, Instr_Addr); 		-- TODO: Connect New_PC to Branch/Jump datapath
 -- Instruction Memory (Use either imem OR synth_imem, not both!)
---	IMEM_1 : imem PORT MAP(Instr_Addr(5 DOWNTO 0), Instr);			--NOR Reg(0) & Reg(1) into Reg(2)
-	IMEM_1 : synth_imem PORT MAP(Instr_Addr(5 DOWNTO 0), Instr);	-- Synthesis version
+	IMEM_1 : imem PORT MAP(Instr_Addr(5 DOWNTO 0), Instr);			--NOR Reg(0) & Reg(1) into Reg(2)
+--	IMEM_1 : synth_imem PORT MAP(Instr_Addr(5 DOWNTO 0), Instr);	-- Synthesis version
 -- Instruction Breakdown
 	OpCode <= Instr(31 DOWNTO 26);
 	RS <= Instr(25 DOWNTO 21);
@@ -154,14 +144,7 @@ BEGIN
 	A1 : alu PORT MAP (ALUControl, SHAMT, RegOut1, ALUSrc_Mux, ALUresult, BranchOut);
 
 ---- Data Memory
---	Ram1: ram PORT MAP (clk, MemWrite, MemRead, dsize, ALUresult, RegOut2, WriteBack);
-
-	RAM: dmem PORT MAP (
-		ref_clk => clk, 
-		we => MemWrite, 
-		a => ALUresult, 
-		wd => RegOut2, 
-		rd => WriteBack); -- USE FOR SYNTHESIS APPROX. ONLY
+	Ram1: ram PORT MAP (clk, MemWrite, MemRead, dsize, ALUresult, RegOut2, WriteBack);
 
 -- MemToRegMux
 	MemToReg_Mux <= ALUresult WHEN (MemtoReg = '0') ELSE

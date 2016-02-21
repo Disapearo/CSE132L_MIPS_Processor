@@ -15,7 +15,7 @@ END ram ;
 ARCHITECTURE arch OF ram IS
 
 	TYPE buff IS ARRAY ((16*32)-1 DOWNTO 0) OF STD_LOGIC_VECTOR (31 DOWNTO 0);
-	--SIGNAL dataMemory : buff := (OTHERS => (OTHERS => '0')); -- For Synthesis, DO NOT INITIALIZE. It tries changing it to wires or something
+	SIGNAL dataMemory : buff := (OTHERS => (OTHERS => '0'));
 
 BEGIN
 
