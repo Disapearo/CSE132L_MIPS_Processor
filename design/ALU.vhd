@@ -15,13 +15,13 @@ ARCHITECTURE arch OF alu IS
 
 	COMPONENT Comparator IS
 		PORT (In1, In2 : IN STD_LOGIC_VECTOR (31 DOWNTO 0);
-			SLTS, SLTU : OUT STD_LOGIC_VECTOR (31 DOWNTO 0);
-			BLZ, BGEZ, BE, BNE, BLEZ, BGZ : OUT STD_LOGIC_VECTOR (31 DOWNTO 0));
+			SLTS, SLTU : OUT STD_LOGIC;
+			BLZ, BGEZ, BE, BNE, BLEZ, BGZ : OUT STD_LOGIC);
 	END COMPONENT;
 
-	SIGNAL CSLTS : STD_LOGIC_VECTOR (31 DOWNTO 0);
-	SIGNAL CSLTU : STD_LOGIC_VECTOR (31 DOWNTO 0);
-	SIGNAL CBLZ, CBGEZ, CBEQ, CBNE, CBLEZ, CBGZ : STD_LOGIC_VECTOR (31 DOWNTO 0);
+	SIGNAL CSLTS : STD_LOGIC;
+	SIGNAL CSLTU : STD_LOGIC;
+	SIGNAL CBLZ, CBGEZ, CBEQ, CBNE, CBLEZ, CBGZ : STD_LOGIC;
 
 BEGIN
 
@@ -35,8 +35,8 @@ BEGIN
 		(A_in OR B_in) WHEN Func_in = "100101" ELSE									-- OR/ORI (OPCODE = "001101")
 		(A_in XOR B_in) WHEN Func_in = "100110" ELSE									-- XOR/XORI (OPCODE = "001110")
 		(A_in NOR B_in) WHEN Func_in = "100111" ELSE									-- NOR
-		CSLTS WHEN Func_in = "101010" ELSE										-- SLT Signed/SLTI Signed (OPCODE = "001010")
-		CSLTU WHEN Func_in = "101011" ELSE										-- SLT Unsigned/SLTI Unsigned (OPCODE = "001011")
+		(0 => CSLTS, OTHERS => '0') WHEN Func_in = "101010" ELSE							-- SLT Signed/SLTI Signed (OPCODE = "001010")
+		(0 => CSLTU, OTHERS => '0') WHEN Func_in = "101011" ELSE							-- SLT Unsigned/SLTI Unsigned (OPCODE = "001011")
 		TO_STDLOGICVECTOR(TO_BITVECTOR(B_in) SLL TO_INTEGER(SIGNED(Shamt))) WHEN Func_in = "000000" ELSE		-- SLL
 		TO_STDLOGICVECTOR(TO_BITVECTOR(B_in) SRL TO_INTEGER(SIGNED(Shamt))) WHEN Func_in = "000010" ELSE		-- SRL
 		TO_STDLOGICVECTOR(TO_BITVECTOR(B_in) SRA TO_INTEGER(SIGNED(Shamt))) WHEN Func_in = "000011" ELSE		-- SRA
@@ -44,14 +44,22 @@ BEGIN
 		TO_STDLOGICVECTOR(TO_BITVECTOR(B_in) SRL TO_INTEGER(SIGNED(A_in))) WHEN Func_in = "000110" ELSE			-- SRLV
 		TO_STDLOGICVECTOR(TO_BITVECTOR(B_in) SRA TO_INTEGER(SIGNED(A_in))) WHEN Func_in = "000111" ELSE			-- SRAV
 		B_in(15 DOWNTO 0) & A_in(15 DOWNTO 0) WHEN Func_in = "001111" ELSE						-- LUI
-		CBLZ WHEN Func_in = "110001" ELSE										-- BLZ (OPCODE = "000001")
+		(0 => CBLZ,  OTHERS => '0') WHEN Func_in = "110001" ELSE							-- BLZ (OPCODE = "000001")
+		(0 => CBGEZ, OTHERS => '0') WHEN Func_in = "110001" ELSE							-- BGEZ (OPCODE = "000001")
+		(0 => CBEQ,  OTHERS => '0') WHEN Func_in = "110100" ELSE							-- BEQ (OPCODE = "000100")
+		(0 => CBNE,  OTHERS => '0') WHEN Func_in = "110101" ELSE							-- BNE (OPCODE = "000101")
+		(0 => CBLEZ, OTHERS => '0') WHEN Func_in = "110110" ELSE							-- BLEZ (OPCODE = "000110")
+		(0 => CBGZ,  OTHERS => '0') WHEN Func_in = "110111" ;								-- BGZ (OPCODE = "000111")
+
+
+--	Branch_out <= '1' WHEN (Func_in = "000001" OR Func_in = "000100" OR Func_in = "000101" OR Func_in = "000110" OR Func_in = "000111") ELSE '0';
+	Branch_out <= CBLZ WHEN Func_in = "110001" ELSE										-- BLZ (OPCODE = "000001")
 		CBGEZ WHEN Func_in = "110001" ELSE										-- BGEZ (OPCODE = "000001")
 		CBEQ WHEN Func_in = "110100" ELSE										-- BEQ (OPCODE = "000100")
 		CBNE WHEN Func_in = "110101" ELSE										-- BNE (OPCODE = "000101")
 		CBLEZ WHEN Func_in = "110110" ELSE										-- BLEZ (OPCODE = "000110")
-		CBGZ WHEN Func_in = "110111" ;											-- BGZ (OPCODE = "000111")
+		CBGZ WHEN Func_in = "110111" ELSE										-- BGZ (OPCODE = "000111")
+		'0';
 
-
-	Branch_out <= '1' WHEN (Func_in = "000001" OR Func_in = "000100" OR Func_in = "000101" OR Func_in = "000110" OR Func_in = "000111") ELSE '0';
 
 END arch;

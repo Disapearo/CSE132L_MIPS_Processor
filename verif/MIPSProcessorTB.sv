@@ -6,14 +6,6 @@ processor L1(.clk(clk), .reset(reset));
 
 initial begin
 
-/*	clk = 1;		// Initial Reset
-	reset = 1;
-	#100
-
-	clk = 0;
-	reset = 1;
-	#100
-*/
 	clk = 1;		// 1
 	reset = 0;
 	#100;
@@ -118,45 +110,6 @@ initial begin
 	reset = 0;
 	#100;
 
-	clk = 1;		// 14
-	reset = 0;
-	#100;
-
-	clk = 0;
-	reset = 0;
-	#100;
-
-	clk = 1;		// 15
-	reset = 0;
-	#100;
-
-	clk = 0;
-	reset = 0;
-	#100;
-
-  clk = 1;		// 16
-	reset = 0;
-	#100;
-
-	clk = 0;
-	reset = 0;
-	#100;
-
-	clk = 1;		// 17
-	reset = 0;
-	#100;
-
-	clk = 0;
-	reset = 0;
-	#100;
-
-	clk = 1;		// 18
-	reset = 0;
-	#100;
-
-	clk = 0;
-	reset = 0;
-	#100;
 
 /*
 	clk = 0;
@@ -167,21 +120,6 @@ initial begin
 	reset = 0;
 	#100;
 
-	clk = 1;
-	reset = 0;
-	#100;
-
-	clk = 0;
-	reset = 1;		//Reset
-	#100;
-
-	clk = 1;
-	reset = 1;		//Reset
-	#100;
-
-	clk = 0;
-	reset = 0;
-	#100;
 */
 end
 endmodule

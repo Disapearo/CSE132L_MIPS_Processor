@@ -4,8 +4,8 @@ USE IEEE.numeric_std.ALL;
 
 ENTITY Comparator IS
 	PORT (In1, In2 : IN STD_LOGIC_VECTOR (31 DOWNTO 0);
-		SLTS, SLTU : OUT STD_LOGIC_VECTOR (31 DOWNTO 0);
-		BLZ, BGEZ, BE, BNE, BLEZ, BGZ : OUT STD_LOGIC_VECTOR (31 DOWNTO 0));
+		SLTS, SLTU : OUT STD_LOGIC;
+		BLZ, BGEZ, BE, BNE, BLEZ, BGZ : OUT STD_LOGIC);
 END Comparator;
 
 ARCHITECTURE arch OF Comparator IS
@@ -16,40 +16,40 @@ BEGIN
 	BEGIN
 
 		IF (signed(In1) < signed(In2)) THEN
-			SLTS <= (OTHERS => '1');
+			SLTS 	<= '1';
 		ELSE
-			SLTS <= (OTHERS => '0');
+			SLTS 	<= '0';
 		END IF;
 
 		IF (In1 < In2) THEN
-			SLTU <= (OTHERS => '1');
+			SLTU 	<= '1';
 		ELSE
-			SLTU <= (OTHERS => '0');
+			SLTU 	<= '0';
 		END IF;
 
 		IF (In1 < X"00000000") THEN
-			BLZ <= (OTHERS => '1');
-			BGZ <= (OTHERS => '0');
-			BLEZ <= (OTHERS => '1');
-			BGEZ <= (OTHERS => '0');
+			BLZ 	<= '1';
+			BGZ 	<= '0';
+			BLEZ 	<= '1';
+			BGEZ 	<= '0';
 		ELSIF (IN1 > X"00000000") THEN
-			BLZ <= (OTHERS => '0');
-			BGZ <= (OTHERS => '1');
-			BLEZ <= (OTHERS => '0');
-			BGEZ <= (OTHERS => '1');
+			BLZ 	<= '0';
+			BGZ 	<= '1';
+			BLEZ 	<= '0';
+			BGEZ 	<= '1';
 		ELSE
-			BLZ <= (OTHERS => '0');
-			BGZ <= (OTHERS => '0');
-			BLEZ <= (OTHERS => '1');
-			BGEZ <= (OTHERS => '1');
+			BLZ 	<= '0';
+			BGZ 	<= '0';
+			BLEZ 	<= '1';
+			BGEZ 	<= '1';
 		END IF;
 
 		IF (In1 = In2) THEN
-			BE <= (OTHERS => '1');
-			BNE <= (OTHERS => '0');
+			BE 	<= '1';
+			BNE 	<= '0';
 		ELSE
-			BE <= (OTHERS => '0');
-			BNE <= (OTHERS => '1');
+			BE 	<= '0';
+			BNE 	<= '1';
 		END IF;
 
 	END PROCESS;

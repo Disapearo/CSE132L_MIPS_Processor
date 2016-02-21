@@ -54,6 +54,7 @@ BEGIN
 
 	ALUSrc <=    '0' WHEN (OpCode = "000000") ELSE													-- RType
 		     '0' WHEN (OpCode = "000010" OR OpCode = "000011") ELSE										-- JType
+		     '0' WHEN (OpCode = "000100" OR OpCode = "000001" OR OpCode = "000111" OR OpCode = "000110" OR OpCode = "000101") ELSE 		-- Branch instructions
 		     '1';																-- IType
 
 --	ALUSrc <=    '0' WHEN (OpCode = "000000" OR OpCode = "000010" OR OpCode = "000011") ELSE '1';							-- RType or JType
