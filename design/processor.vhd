@@ -9,18 +9,12 @@ END processor ;
 
 ARCHITECTURE arch OF processor IS
 
-	COMPONENT PC IS
+	COMPONENT register IS
 		PORT (ref_clk: IN STD_LOGIC;
-			pc_reset : IN STD_LOGIC;
-			pc_in:IN STD_LOGIC_VECTOR (31 DOWNTO 0);
-			pc_out: OUT STD_LOGIC_VECTOR (31 DOWNTO 0));
-	END COMPONENT;
-	
-	COMPONENT adder IS
-		GENERIC(addr_size : INTEGER := 32);
-		PORT (oldcounter: IN STD_LOGIC_VECTOR(addr_size - 1 DOWNTO 0);
-			inc: IN STD_LOGIC_VECTOR(addr_size - 1 DOWNTO 0);
-				newcounter: OUT STD_LOGIC_VECTOR(addr_size - 1 DOWNTO 0));
+			reg_reset : IN STD_LOGIC;
+			reg_enable:	IN  std_logic;
+			data_in:IN STD_LOGIC_VECTOR (31 DOWNTO 0);
+			data_out: OUT STD_LOGIC_VECTOR (31 DOWNTO 0));
 	END COMPONENT;
 
 	COMPONENT controller IS
@@ -34,11 +28,6 @@ ARCHITECTURE arch OF processor IS
 		port(addr: IN STD_LOGIC_VECTOR(5 downto 0);
 		rd: OUT STD_LOGIC_VECTOR(31 downto 0));
 	END COMPONENT;
-
---	COMPONENT synth_imem IS -- instruction memory (For Synthesis)
---		port(addr: IN STD_LOGIC_VECTOR(5 downto 0);
---		rd: OUT STD_LOGIC_VECTOR(31 downto 0));
---	END COMPONENT;
 
 	COMPONENT regfile IS
 		GENERIC ( NBIT : INTEGER := 32;
@@ -72,13 +61,6 @@ ARCHITECTURE arch OF processor IS
 			dataO 	: OUT std_logic_vector (31 DOWNTO 0));	
 	END COMPONENT;
 
---	COMPONENT dmem IS
---		PORT(
---		ref_clk, we : IN std_logic;
---		a, wd: IN std_logic_vector (31 DOWNTO 0);
---		rd : OUT std_logic_vector (31 DOWNTO 0));
---	END COMPONENT;
-
 	SIGNAL Instr_Addr: STD_LOGIC_VECTOR (31 DOWNTO 0);
 
 	SIGNAL Instr : STD_LOGIC_VECTOR (31 DOWNTO 0);
@@ -109,7 +91,7 @@ ARCHITECTURE arch OF processor IS
 	SIGNAL BranchAndGate : STD_LOGIC;
 
 BEGIN
-	ProgCnt : PC PORT MAP(clk, reset, New_PC, Instr_Addr); 		-- TODO: Connect New_PC to Branch/Jump datapath
+	ProgamCounter : register PORT MAP(clk, reset, New_PC, Instr_Addr); 		-- TODO: Connect New_PC to Branch/Jump datapath
 -- Instruction Memory (Use either imem OR synth_imem, not both!)
 	IMEM_1 : imem PORT MAP(Instr_Addr(5 DOWNTO 0), Instr);		--NOR Reg(0) & Reg(1) into Reg(2)
 --	IMEM_1 : synth_imem PORT MAP(Instr_Addr(5 DOWNTO 0), Instr);	-- Synthesis version
