@@ -1,0 +1,92 @@
+Warning: Detected use of obsolete/unsupported feature.  The following
+	will not be available in a future release of the application:
+	elaborate -update. Use plain elaborate instead (CMD-100)
+Loading db file '/ecelib/linware/synopsys15/dc/libraries/syn/gtech.db'
+Loading db file '/ecelib/linware/synopsys15/dc/libraries/syn/standard.sldb'
+  Loading link library 'saed32lvt_tt1p05vn40c'
+  Loading link library 'saed32sram_tt1p05vn40c'
+  Loading link library 'gtech'
+Running PRESTO HDLC
+Warning:  /users/ugrad2/2014/fall/ehenriqu/CSE132L/CSE132L_MIPS_Processor/design/processor.vhd:107: The initial value for signal 'New_PC' is not supported for synthesis. Presto ignores it.  (ELAB-130)
+Presto compilation completed successfully.
+Elaborated 1 design.
+Current design is now 'processor'.
+Information: Building the design 'PC'. (HDL-193)
+
+Inferred memory devices in process
+	in routine PC line 15 in file
+		'/users/ugrad2/2014/fall/ehenriqu/CSE132L/CSE132L_MIPS_Processor/design/ProgramCounter.vhd'.
+===============================================================================
+|    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
+===============================================================================
+|     pc_out_reg      | Flip-flop |  32   |  Y  | N  | N  | N  | N  | N  | N  |
+===============================================================================
+Presto compilation completed successfully.
+Information: Building the design 'synth_imem'. (HDL-193)
+Warning:  /users/ugrad2/2014/fall/ehenriqu/CSE132L/CSE132L_MIPS_Processor/design/Synth_ROM.vhd:15: The initial value for signal 'mem' is not supported for synthesis. Presto ignores it.  (ELAB-130)
+Statistics for MUX_OPs
+===========================================================
+| block name/line  | Inputs | Outputs | # sel inputs | MB |
+===========================================================
+|  synth_imem/51   |   64   |   21    |      6       | N  |
+===========================================================
+Presto compilation completed successfully.
+Information: Building the design 'controller'. (HDL-193)
+
+Inferred memory devices in process
+	in routine controller line 68 in file
+		'/users/ugrad2/2014/fall/ehenriqu/CSE132L/CSE132L_MIPS_Processor/design/Controller.vhd'.
+===========================================================================
+|    Register Name    | Type  | Width | Bus | MB | AR | AS | SR | SS | ST |
+===========================================================================
+|    RegWrite_reg     | Latch |   1   |  N  | N  | N  | N  | -  | -  | -  |
+===========================================================================
+
+Inferred memory devices in process
+	in routine controller line 87 in file
+		'/users/ugrad2/2014/fall/ehenriqu/CSE132L/CSE132L_MIPS_Processor/design/Controller.vhd'.
+===========================================================================
+|    Register Name    | Type  | Width | Bus | MB | AR | AS | SR | SS | ST |
+===========================================================================
+|   ALUControl_reg    | Latch |   6   |  Y  | N  | N  | N  | -  | -  | -  |
+===========================================================================
+Presto compilation completed successfully.
+Information: Building the design 'regfile' instantiated from design 'processor' with
+	the parameters "NBIT=32,NSEL=5". (HDL-193)
+Warning:  /users/ugrad2/2014/fall/ehenriqu/CSE132L/CSE132L_MIPS_Processor/design/RegFile.vhd:24: The initial value for signal 'regarray' is not supported for synthesis. Presto ignores it.  (ELAB-130)
+
+Inferred memory devices in process
+	in routine regfile_NBIT32_NSEL5 line 27 in file
+		'/users/ugrad2/2014/fall/ehenriqu/CSE132L/CSE132L_MIPS_Processor/design/RegFile.vhd'.
+===============================================================================
+|    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
+===============================================================================
+|    regarray_reg     | Flip-flop | 1024  |  Y  | N  | N  | N  | N  | N  | N  |
+===============================================================================
+Statistics for MUX_OPs
+==================================================================
+|    block name/line      | Inputs | Outputs | # sel inputs | MB |
+==================================================================
+| regfile_NBIT32_NSEL5/38 |   32   |   32    |      5       | N  |
+| regfile_NBIT32_NSEL5/39 |   32   |   32    |      5       | N  |
+==================================================================
+Presto compilation completed successfully.
+Information: Building the design 'alu'. (HDL-193)
+
+Inferred memory devices in process
+	in routine alu line 30 in file
+		'/users/ugrad2/2014/fall/ehenriqu/CSE132L/CSE132L_MIPS_Processor/design/ALU.vhd'.
+===========================================================================
+|    Register Name    | Type  | Width | Bus | MB | AR | AS | SR | SS | ST |
+===========================================================================
+|      O_out_reg      | Latch |  32   |  Y  | N  | N  | N  | -  | -  | -  |
+===========================================================================
+Presto compilation completed successfully.
+Information: Building the design 'dmem'. (HDL-193)
+Presto compilation completed successfully.
+Information: Building the design 'adder' instantiated from design 'processor' with
+	the parameters "addr_size=32". (HDL-193)
+Presto compilation completed successfully.
+Information: Building the design 'Comparator'. (HDL-193)
+Presto compilation completed successfully.
+1

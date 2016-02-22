@@ -72,6 +72,13 @@ ARCHITECTURE arch OF processor IS
 			dataO 	: OUT std_logic_vector (31 DOWNTO 0));	
 	END COMPONENT;
 
+--	COMPONENT dmem IS
+--		PORT(
+--		ref_clk, we : IN std_logic;
+--		a, wd: IN std_logic_vector (31 DOWNTO 0);
+--		rd : OUT std_logic_vector (31 DOWNTO 0));
+--	END COMPONENT;
+
 	SIGNAL Instr_Addr: STD_LOGIC_VECTOR (31 DOWNTO 0);
 
 	SIGNAL Instr : STD_LOGIC_VECTOR (31 DOWNTO 0);
@@ -104,7 +111,7 @@ ARCHITECTURE arch OF processor IS
 BEGIN
 	ProgCnt : PC PORT MAP(clk, reset, New_PC, Instr_Addr); 		-- TODO: Connect New_PC to Branch/Jump datapath
 -- Instruction Memory (Use either imem OR synth_imem, not both!)
-	IMEM_1 : imem PORT MAP(Instr_Addr(5 DOWNTO 0), Instr);			--NOR Reg(0) & Reg(1) into Reg(2)
+	IMEM_1 : imem PORT MAP(Instr_Addr(5 DOWNTO 0), Instr);		--NOR Reg(0) & Reg(1) into Reg(2)
 --	IMEM_1 : synth_imem PORT MAP(Instr_Addr(5 DOWNTO 0), Instr);	-- Synthesis version
 -- Instruction Breakdown
 	OpCode <= Instr(31 DOWNTO 26);
@@ -145,6 +152,10 @@ BEGIN
 
 ---- Data Memory
 	Ram1: ram PORT MAP (clk, MemWrite, MemRead, dsize, ALUresult, RegOut2, WriteBack);
+	
+--	RAM: dmem PORT MAP ( -- USE FOR SYNTHESIS APPROX. ONLY
+--		ref_clk => clk, we => MemWrite, 
+--		a => ALUresult, wd => RegOut2, rd => WriteBack);
 
 -- MemToRegMux
 	MemToReg_Mux <= ALUresult WHEN (MemtoReg = '0') ELSE

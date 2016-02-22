@@ -1,0 +1,183 @@
+Information: Checking out the license 'DesignWare'. (SEC-104)
+Information: Evaluating DesignWare library utilization. (UISN-27)
+
+============================================================================
+| DesignWare Building Block Library  |         Version         | Available |
+============================================================================
+| Basic DW Building Blocks           | J-2014.09-DWBB_201409.4 |     *     |
+| Licensed DW Building Blocks        | J-2014.09-DWBB_201409.4 |     *     |
+============================================================================
+
+
+Information: There are 76 potential problems in your design. Please run 'check_design' for more information. (LINT-99)
+
+
+
+  Beginning Pass 1 Mapping
+  ------------------------
+  Processing 'adder_addr_size32_0'
+  Processing 'dmem'
+  Processing 'Comparator'
+  Processing 'alu'
+  Processing 'regfile_NBIT32_NSEL5'
+  Processing 'controller'
+  Processing 'synth_imem'
+  Processing 'PC'
+  Processing 'processor'
+
+  Updating timing information
+Information: Updating design information... (UID-85)
+
+  Beginning Implementation Selection
+  ----------------------------------
+  Processing 'adder_addr_size32_1_DW01_add_0'
+  Processing 'adder_addr_size32_0_DW01_add_0'
+  Mapping 'DW_sra'
+Information: Added key list 'DesignWare' to design 'alu'. (DDB-72)
+  Mapping 'DW_rash'
+  Mapping 'DW01_ash'
+  Mapping 'DW_sra'
+  Mapping 'DW_rash'
+  Mapping 'DW01_ash'
+  Processing 'alu_DW01_sub_0'
+  Processing 'alu_DW01_sub_1'
+  Processing 'alu_DW01_add_0'
+  Processing 'alu_DW01_add_1'
+  Mapping 'Comparator_DW_cmp_0'
+  Mapping 'Comparator_DW_cmp_2'
+  Processing 'Comparator_DW01_cmp6_0'
+
+  Beginning Mapping Optimizations  (Medium effort)
+  -------------------------------
+Information: Added key list 'DesignWare' to design 'Comparator'. (DDB-72)
+
+                                  TOTAL                                      
+   ELAPSED            WORST NEG   SETUP    DESIGN                            
+    TIME      AREA      SLACK     COST    RULE COST         ENDPOINT         
+  --------- --------- --------- --------- --------- -------------------------
+    0:00:09   84057.1      5.43    1469.6     863.1                          
+    0:00:09   84057.1      5.43    1469.6     863.1                          
+    0:00:15   86230.2      0.76      24.0       0.0                          
+    0:00:15   86274.8      0.76      23.9       0.0                          
+    0:00:15   86274.8      0.76      23.9       0.0                          
+    0:00:15   86274.8      0.76      23.9       0.0                          
+    0:00:15   86274.8      0.76      23.9       0.0                          
+    0:00:17   82191.5      0.74      23.0       0.0                          
+    0:00:18   82164.7      0.72      22.6       0.0                          
+    0:00:18   82167.2      0.72      22.6       0.0                          
+    0:00:19   82167.2      0.72      22.6       0.0                          
+    0:00:19   82170.3      0.61      19.0       0.0                          
+    0:00:19   82186.7      0.58      18.1       0.0                          
+    0:00:19   82186.7      0.58      18.1       0.0                          
+    0:00:19   82186.7      0.58      18.1       0.0                          
+    0:00:19   82186.7      0.58      18.1       0.0                          
+    0:00:19   82186.7      0.58      18.1       0.0                          
+    0:00:19   82186.7      0.58      18.1       0.0                          
+    0:00:19   82186.7      0.58      18.1       0.0                          
+
+
+
+  Beginning Delay Optimization Phase
+  ----------------------------------
+
+                                  TOTAL                                      
+   ELAPSED            WORST NEG   SETUP    DESIGN                            
+    TIME      AREA      SLACK     COST    RULE COST         ENDPOINT         
+  --------- --------- --------- --------- --------- -------------------------
+    0:00:19   82179.2      0.58      18.1       0.0                          
+    0:00:19   82178.9      0.58      18.1       0.0 ProgCnt/pc_out_reg[17]/D 
+    0:00:20   82227.0      0.46      14.3     105.4 ProgCnt/pc_out_reg[23]/D 
+    0:00:20   82250.5      0.44      13.6     105.4 ProgCnt/pc_out_reg[14]/D 
+    0:00:20   82259.3      0.42      12.9     105.4 ProgCnt/pc_out_reg[23]/D 
+    0:00:21   82291.1      0.39      11.8     105.4 ProgCnt/pc_out_reg[17]/D 
+    0:00:21   82299.3      0.38      11.4     105.4 ProgCnt/pc_out_reg[16]/D 
+    0:00:21   82317.3      0.37      11.4     105.4 ProgCnt/pc_out_reg[31]/D 
+    0:00:22   82325.9      0.34      10.6     105.4 ProgCnt/pc_out_reg[31]/D 
+    0:00:22   82340.1      0.33      10.2     105.4 ProgCnt/pc_out_reg[31]/D 
+    0:00:22   82335.3      0.32       9.9     105.4 ProgCnt/pc_out_reg[31]/D 
+    0:00:22   82348.9      0.31       9.7     105.4 ProgCnt/pc_out_reg[31]/D 
+    0:00:23   82350.5      0.31       9.5     105.4 ProgCnt/pc_out_reg[31]/D 
+    0:00:23   82359.4      0.26       8.0     105.4 ProgCnt/pc_out_reg[31]/D 
+    0:00:24   82375.2      0.25       7.7     105.4 ProgCnt/pc_out_reg[31]/D 
+    0:00:24   82381.8      0.22       6.8     105.4 ProgCnt/pc_out_reg[31]/D 
+    0:00:24   82391.8      0.22       6.8     105.4 ProgCnt/pc_out_reg[9]/D  
+    0:00:25   82392.4      0.22       6.6     105.4 ProgCnt/pc_out_reg[9]/D  
+    0:00:26   82401.4      0.20       6.2     105.4 ProgCnt/pc_out_reg[9]/D  
+    0:00:26   82401.4      0.20       6.1     105.4 ProgCnt/pc_out_reg[9]/D  
+    0:00:27   82401.5      0.20       6.1     105.4 ProgCnt/pc_out_reg[31]/D 
+    0:00:27   82404.0      0.19       5.9     105.4 ProgCnt/pc_out_reg[4]/D  
+    0:00:27   82411.6      0.19       5.8     105.4 ProgCnt/pc_out_reg[4]/D  
+    0:00:28   82426.3      0.19       5.8     105.4 ProgCnt/pc_out_reg[4]/D  
+    0:00:29   82420.9      0.18       4.8     105.4 ProgCnt/pc_out_reg[4]/D  
+    0:00:29   82423.9      0.18       5.3     105.4 ProgCnt/pc_out_reg[31]/D 
+    0:00:29   82429.6      0.16       4.8     110.2 ProgCnt/pc_out_reg[4]/D  
+    0:00:29   82440.0      0.15       4.7     110.2 ProgCnt/pc_out_reg[4]/D  
+    0:00:29   82441.8      0.15       4.6     110.2 ProgCnt/pc_out_reg[4]/D  
+    0:00:30   82460.6      0.12       3.1     110.2 ProgCnt/pc_out_reg[31]/D 
+    0:00:30   82495.3      0.10       2.9     110.2 ProgCnt/pc_out_reg[4]/D  
+    0:00:31   82526.9      0.09       2.6     110.2 ProgCnt/pc_out_reg[4]/D  
+    0:00:33   82526.9      0.09       2.6     110.2                          
+    0:00:34   82525.5      0.09       2.6     110.2                          
+
+
+  Beginning Design Rule Fixing  (max_transition)  (max_capacitance)
+  ----------------------------
+
+                                  TOTAL                                      
+   ELAPSED            WORST NEG   SETUP    DESIGN                            
+    TIME      AREA      SLACK     COST    RULE COST         ENDPOINT         
+  --------- --------- --------- --------- --------- -------------------------
+    0:00:34   82537.7      0.09       2.3     110.2                          
+    0:00:34   82562.1      0.08       2.3       0.0 ProgCnt/pc_out_reg[31]/D 
+    0:00:35   82558.9      0.07       2.1       0.0 ProgCnt/pc_out_reg[4]/D  
+    0:00:35   82560.9      0.07       2.1       0.0 ProgCnt/pc_out_reg[4]/D  
+    0:00:36   82624.3      0.07       2.1       0.0 ProgCnt/pc_out_reg[31]/D 
+    0:00:36   82630.0      0.06       1.8       0.0 ProgCnt/pc_out_reg[4]/D  
+    0:00:36   82630.0      0.06       1.8       0.0 ProgCnt/pc_out_reg[31]/D 
+    0:00:38   82630.0      0.06       1.8       0.0                          
+    0:00:39   82630.0      0.06       1.8       0.0                          
+
+
+  Beginning Area-Recovery Phase  (cleanup)
+  -----------------------------
+
+                                  TOTAL                                      
+   ELAPSED            WORST NEG   SETUP    DESIGN                            
+    TIME      AREA      SLACK     COST    RULE COST         ENDPOINT         
+  --------- --------- --------- --------- --------- -------------------------
+    0:00:39   82630.0      0.06       1.8       0.0                          
+    0:00:39   82630.0      0.06       1.8       0.0                          
+    0:00:39   82453.4      0.07       1.7       0.0                          
+    0:00:40   82371.5      0.07       1.7       0.0                          
+    0:00:40   82337.7      0.07       1.8       0.0                          
+    0:00:40   82321.8      0.07       1.8       0.0                          
+    0:00:40   82313.4      0.07       1.8       0.0                          
+    0:00:41   82304.5      0.07       1.8       0.0                          
+    0:00:41   82299.2      0.07       1.9       0.0                          
+    0:00:41   82299.2      0.07       1.9       0.0                          
+    0:00:42   82304.2      0.06       1.8       0.0 ProgCnt/pc_out_reg[31]/D 
+    0:00:43   82318.8      0.06       1.5       0.0                          
+    0:00:43   82242.3      0.06       1.7       0.0                          
+    0:00:43   82230.3      0.06       1.7       0.0                          
+    0:00:43   82230.3      0.06       1.7       0.0                          
+    0:00:43   82230.3      0.06       1.7       0.0                          
+    0:00:43   82230.3      0.06       1.7       0.0                          
+    0:00:43   82230.3      0.06       1.7       0.0                          
+    0:00:43   82230.3      0.06       1.7       0.0                          
+    0:00:44   82231.0      0.06       0.5       0.0 ProgCnt/pc_out_reg[4]/D  
+    0:00:44   82230.9      0.03       0.5       0.0 ProgCnt/pc_out_reg[31]/D 
+    0:00:44   82232.1      0.02       0.5       0.0 ProgCnt/pc_out_reg[31]/D 
+    0:00:45   82232.7      0.01       0.0       0.0 ProgCnt/pc_out_reg[4]/D  
+    0:00:45   82228.1      0.00       0.0       0.0                          
+Loading db file '/users/ugrad2/2012/spring/pooriam/libraries/saed32lvt_tt1p05vn40c.db'
+Loading db file '/users/ugrad2/2012/spring/pooriam/libraries/saed32sram_tt1p05vn40c.db'
+
+
+Note: Symbol # after min delay cost means estimated hold TNS across all active scenarios 
+
+
+  Optimization Complete
+  ---------------------
+Warning: Design 'processor' contains 1 high-fanout nets. A fanout number of 1000 will be used for delay calculations involving these nets. (TIM-134)
+     Net 'RAM/net412': 1056 load(s), 1 driver(s)
+1

@@ -1,0 +1,91 @@
+Warning: duplicate option '-nosplit' overrides previous value. (CMD-018)
+ 
+****************************************
+Report : area
+Design : processor
+Version: J-2014.09-SP4
+Date   : Sun Feb 21 19:07:34 2016
+****************************************
+
+Library(s) Used:
+
+    saed32lvt_tt1p05vn40c (File: /users/ugrad2/2012/spring/pooriam/libraries/saed32lvt_tt1p05vn40c.db)
+    saed32sram_tt1p05vn40c (File: /users/ugrad2/2012/spring/pooriam/libraries/saed32sram_tt1p05vn40c.db)
+
+Number of ports:                            2
+Number of nets:                           418
+Number of cells:                          152
+Number of combinational cells:            144
+Number of sequential cells:                 0
+Number of macros/black boxes:               0
+Number of buf/inv:                         33
+Number of references:                      22
+
+Combinational area:              16868.808113
+Buf/Inv area:                     2257.815322
+Noncombinational area:            7176.772645
+Macro/Black Box area:            50667.683594
+Net Interconnect area:            7514.835948
+
+Total cell area:                 74713.264353
+Total area:                      82228.100300
+
+The above information was reported from the logical library. The following are from the physical library:
+
+Hierarchical area distribution
+------------------------------
+
+                                  Global cell area              Local cell area
+                                  -------------------  --------------------------------- 
+Hierarchical cell                 Absolute    Percent  Combi-      Noncombi-  Black-
+                                  Total       Total    national    national   boxes       Design
+--------------------------------  ----------  -------  ----------  ---------  ----------  ------------------------------
+processor                         74713.2644    100.0    372.8293     0.0000      0.0000  processor
+A1                                 8355.4924     11.2   6902.5512   162.6522      0.0000  alu
+A1/C1                               582.2439      0.8     71.6686     0.0000      0.0000  Comparator
+A1/C1/lt_18                         242.9617      0.3    242.9617     0.0000      0.0000  Comparator_DW_cmp_2
+A1/C1/r301                          267.6136      0.4    267.6136     0.0000      0.0000  Comparator_DW01_cmp6_0
+A1/add_30                           156.5527      0.2    156.5527     0.0000      0.0000  alu_DW01_add_1
+A1/add_30_2                         156.5527      0.2    156.5527     0.0000      0.0000  alu_DW01_add_0
+A1/sub_30                           197.4699      0.3    197.4699     0.0000      0.0000  alu_DW01_sub_1
+A1/sub_30_2                         197.4699      0.3    197.4699     0.0000      0.0000  alu_DW01_sub_0
+C1                                  224.1550      0.3    188.5748    35.5802      0.0000  controller
+IMEM_1                              330.1331      0.4    330.1331     0.0000      0.0000  synth_imem
+NormAdder                           175.8676      0.2      0.0000     0.0000      0.0000  adder_addr_size32_1
+NormAdder/add_18                    175.8676      0.2    175.8676     0.0000      0.0000  adder_addr_size32_1_DW01_add_0
+PCAdder                             218.5638      0.3      0.0000     0.0000      0.0000  adder_addr_size32_0
+PCAdder/add_18                      218.5638      0.3    218.5638     0.0000      0.0000  adder_addr_size32_0_DW01_add_0
+ProgCnt                             282.6081      0.4     70.3979   212.2102      0.0000  PC
+R1                                14084.6607     18.9   7318.3306  6766.3301      0.0000  regfile_NBIT32_NSEL5
+RAM                               50668.9543     67.8      1.2707     0.0000  50667.6836  dmem
+--------------------------------  ----------  -------  ----------  ---------  ----------  ------------------------------
+Total                                                  16868.8081  7176.7726  50667.6836
+
+
+Area of detected synthetic parts
+--------------------------------
+                                       Perc. of
+  Module    Implem.  Count       Area cell area
+  --------- -------  ----- ---------- ---------
+  DW01_add      rpl      4   707.5368      0.9%
+  DW01_cmp6     rpl      1   267.6137      0.4%
+  DW01_sub      rpl      2   394.9398      0.5%
+  DW_cmp    apparch      1   242.9617      0.3%
+  --------- -------  ----- ---------- ---------
+  Total:                 8  1613.0520      2.2%
+
+Estimated area of ungrouped synthetic parts
+-------------------------------------------
+                           Estimated  Perc. of
+  Module   Implem.  Count       Area cell area
+  -------- -------  ----- ---------- ---------
+  DW01_ash    astr      2  1829.8374      2.4%
+  DW_cmp   apparch      1    30.4973      0.0%
+  DW_rash     astr      2  1830.5997      2.5%
+  DW_sra      astr      2  1653.7159      2.2%
+  -------- -------  ----- ---------- ---------
+  Total:                7  5344.6502      7.2%
+
+Total synthetic cell area:              6957.7023  9.3%  (estimated)
+
+1

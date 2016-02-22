@@ -1,0 +1,10 @@
+
+  Linking design 'processor'
+  Using the following designs and libraries:
+  --------------------------------------------------------------------------
+  * (9 designs)               /users/ugrad2/2014/fall/ehenriqu/CSE132L/CSE132L_MIPS_Processor/processor.db, etc
+  saed32lvt_tt1p05vn40c (library) /users/ugrad2/2012/spring/pooriam/libraries/saed32lvt_tt1p05vn40c.db
+  saed32sram_tt1p05vn40c (library) /users/ugrad2/2012/spring/pooriam/libraries/saed32sram_tt1p05vn40c.db
+  dw_foundation.sldb (library) /ecelib/linware/synopsys15/dc/libraries/syn/dw_foundation.sldb
+
+1

@@ -1,0 +1,16 @@
+************************************
+Report : units
+Design : processor
+Version: J-2014.09-SP4
+Date   : Sun Feb 21 19:07:34 2016
+
+************************************
+Units
+------------------------------------
+Time_unit            : 1.0e-09 Second(ns)
+Capacitive_load_unit : 1.0e-15 Farad(fF)
+Resistance_unit      : 1.0e+6 Ohm(MOhm)
+Voltage_unit         : 1 Volt
+Power_unit           : N/A
+Current_unit         : 1.0e-06 Amp(uA)
+1
