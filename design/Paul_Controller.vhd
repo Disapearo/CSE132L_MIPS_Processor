@@ -4,7 +4,7 @@ USE ieee.std_logic_1164.ALL;
 ENTITY controller IS
 	PORT (clk, rst : 		IN STD_LOGIC;
 		Funct, OpCode : 	IN STD_LOGIC_VECTOR (5 DOWNTO 0);
-		MemtoReg, MemWrite, MemRead, Branch, ALUSrcA, RegDest, RegWrite, IRWrite, PCWrite, IorD : OUT STD_LOGIC; --JumpOut, IorD : OUT STD_LOGIC;
+		MemtoReg, MemWrite, MemRead, Branch, ALUSrcA, RegDest, RegWrite, IRWrite, PCWrite, IorD : OUT STD_LOGIC;
 		ALUSrcB, PCSrc : 	OUT STD_LOGIC_VECTOR (1 DOWNTO 0);
 		ALUControl : 		OUT STD_LOGIC_VECTOR (2 DOWNTO 0);--5 DOWNTO 0);
 		dsize : 			OUT STD_LOGIC_VECTOR (2 DOWNTO 0));

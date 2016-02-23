@@ -11,22 +11,28 @@ ARCHITECTURE arch OF processor IS
 
 	COMPONENT register IS
 		PORT (ref_clk: IN STD_LOGIC;
-			reg_reset : IN STD_LOGIC;
+			reg_reset : 	IN STD_LOGIC;
 			reg_enable:	IN  std_logic;
 			data_in:IN STD_LOGIC_VECTOR (31 DOWNTO 0);
 			data_out: OUT STD_LOGIC_VECTOR (31 DOWNTO 0));
 	END COMPONENT;
 
 	COMPONENT controller IS
-		PORT (Funct, OpCode : IN STD_LOGIC_VECTOR (5 DOWNTO 0);
-			MemtoReg, MemWrite, MemRead, Branch, ALUSrc, RegDest, RegWrite, JumpOut : OUT STD_LOGIC;
-			ALUControl : OUT STD_LOGIC_VECTOR (5 DOWNTO 0);
-			dsize : OUT STD_LOGIC_VECTOR (2 DOWNTO 0));
+		PORT (ref_clk, rst : 		IN STD_LOGIC;
+			Funct, OpCode : 	IN STD_LOGIC_VECTOR (5 DOWNTO 0);
+			MemtoReg, MemWrite, MemRead, Branch, ALUSrcA, RegDest, RegWrite, IRWrite, PCWrite, IorD : OUT STD_LOGIC;
+			ALUSrcB, PCSrc : 	OUT STD_LOGIC_VECTOR (1 DOWNTO 0);
+			ALUControl : 		OUT STD_LOGIC_VECTOR (2 DOWNTO 0);--5 DOWNTO 0);
+			dsize : 			OUT STD_LOGIC_VECTOR (2 DOWNTO 0));
 	END COMPONENT;
 
-	COMPONENT imem IS -- instruction memory
-		port(addr: IN STD_LOGIC_VECTOR(5 downto 0);
-		rd: OUT STD_LOGIC_VECTOR(31 downto 0));
+	COMPONENT mem IS
+		PORT (ref_clk, rst : IN STD_LOGIC;
+			addr : IN STD_LOGIC_VECTOR (31 DOWNTO 0);
+			we, IorD : IN STD_LOGIC;
+			wd : IN STD_LOGIC_VECTOR (31 DOWNTO 0);
+			rd : OUT STD_LOGIC_VECTOR (31 DOWNTO 0)
+		);
 	END COMPONENT;
 
 	COMPONENT regfile IS
@@ -91,10 +97,31 @@ ARCHITECTURE arch OF processor IS
 	SIGNAL BranchAndGate : STD_LOGIC;
 
 BEGIN
-	ProgamCounter : register PORT MAP(clk, reset, New_PC, Instr_Addr); 		-- TODO: Connect New_PC to Branch/Jump datapath
--- Instruction Memory (Use either imem OR synth_imem, not both!)
-	IMEM_1 : imem PORT MAP(Instr_Addr(5 DOWNTO 0), Instr);		--NOR Reg(0) & Reg(1) into Reg(2)
---	IMEM_1 : synth_imem PORT MAP(Instr_Addr(5 DOWNTO 0), Instr);	-- Synthesis version
+------ CONTROL ------
+-- Controller
+	C1: controller PORT MAP(Funct, OpCode, MemtoReg, MemWrite, MemRead, Branch, ALUSrc, RegDest, RegWrite, JumpOut, ALUControl, dsize);
+-- Branch And Gate
+	BranchAndGate <= BranchOut AND Branch;
+
+---- TODO PCEn Mux
+
+
+------ DATAPATH ------
+-- Program Counter
+	ProgamCounter : register PORT MAP (clk, reset, PCEn, pc_in, pc_out);
+
+-- IorD_Mux
+	mem_addr <= pc_out WHEN IorD = '0' ELSE;
+		 <= PCSrc_Mux WHEN IorD = '1';
+	
+-- Instr/Data Memory
+	Memory : mem PORT MAP ();
+
+-- Instruction register
+	Instr_Reg : register PORT MAP (clk, reset, IRWrite, mem_out, Instr);
+-- Data register
+	Data_Reg : register PORT MAP (clk, reset, '1', mem_out, Data);
+   
 -- Instruction Breakdown
 	OpCode <= Instr(31 DOWNTO 26);
 	RS <= Instr(25 DOWNTO 21);
@@ -103,13 +130,23 @@ BEGIN
 	SHAMT <= Instr(10 DOWNTO 6);
 	Funct <= Instr(5 DOWNTO 0);
 	BitImmediate_16 <= Instr(15 DOWNTO 0);
--- Controller
-	C1: controller PORT MAP(Funct, OpCode, MemtoReg, MemWrite, MemRead, Branch, ALUSrc, RegDest, RegWrite, JumpOut, ALUControl, dsize);
+
 
 ------ INSTRUCTION DATAPATH
 -- RegDest Mux
 	RegDest_Mux <= RT WHEN (RegDest = '0') ELSE
 		RD WHEN (RegDest = '1');
+-- MemToReg Mux
+	MemToReg_Mux <= ALUOut WHEN (MemToReg = '0') ELSE
+		Data WHEN (MemToReg = '1');
+
+-- Register File
+	R1 : regfile
+		GENERIC MAP (32, 5)
+		PORT MAP (clk, reset, RegWrite, RS, RT, RegDest_Mux, RegOut1, RegOut2, MemToReg_Mux);
+
+------ Double Register TODO
+
 -- Sign Extend
 	Sign_Expand: FOR i IN 0 TO 31 GENERATE
 		
@@ -122,52 +159,33 @@ BEGIN
 		END GENERATE fill;
 
 	END GENERATE Sign_Expand;
--- Register File
-	R1 : regfile
-		GENERIC MAP (32, 5)
-		PORT MAP (clk, reset, RegWrite, RS, RT, RegDest_Mux, RegOut1, RegOut2, MemToReg_Mux);
--- ALUSrc Mux
-	ALUSrc_Mux <= RegOut2 WHEN (ALUSrc = '0') ELSE
-		new_immed WHEN (ALUSrc = '1');
+
+-- Shift Left 2 Immediate
+	shiftleft_imm <= TO_STDLOGICVECTOR(TO_BITVECTOR(new_immed) sll 2);
+
+-- ALUSrcA Mux
+	ALUSrcA_Mux <= pc_out WHEN (ALUSrcA = '0') ELSE
+		-- RegA NAME --  WHEN (ALUSrcA = '1');
+-- ALUSrcB Mux
+	ALUSrcB_Mux <= --RegBNAME-- 	WHEN (ALUSrcB = "00") ELSE
+		(0=>'1', OTHERS => '0') WHEN (ALUSrcB = "01") ELSE
+		new_immed 		WHEN (ALUSrcB = "10") ELSE
+		shiftleft_imm 		WHEN (ALUSrcB = "11");
+
 -- ALU
 	A1 : alu PORT MAP (ALUControl, SHAMT, RegOut1, ALUSrc_Mux, ALUresult, BranchOut);
 
----- Data Memory
-	Ram1: ram PORT MAP (clk, MemWrite, MemRead, dsize, ALUresult, RegOut2, WriteBack);
-	
---	RAM: dmem PORT MAP ( -- USE FOR SYNTHESIS APPROX. ONLY
---		ref_clk => clk, we => MemWrite, 
---		a => ALUresult, wd => RegOut2, rd => WriteBack);
 
--- MemToRegMux
-	MemToReg_Mux <= ALUresult WHEN (MemtoReg = '0') ELSE
-		WriteBack WHEN (MemtoReg = '1');
-
------- BRANCH/JUMP DATAPATH
--- PC Adder
-	PCAdder: adder 
-		GENERIC MAP (32)
-		PORT MAP (Instr_Addr, X"00000001", pc4); -- Pass a constant or change Paul's code?
-
--- Normal Adder
-	NormAdder: adder
-		GENERIC MAP(32)
-		PORT MAP(pc4,shiftleft_im,AddALU_Result);
-
--- Shift Left 2
+-- TODO: Shift Jump and Jump Addr should happen at once
+-- Shift Jump Target Left 2
 	shiftleft <= Instr(25 DOWNTO 0) & "00"; --TO_STDLOGICVECTOR(TO_BITVECTOR(Instr(25 DOWNTO 0)) sll 2);
--- Shift Left 2 Immediate
-	shiftleft_im <= TO_STDLOGICVECTOR(TO_BITVECTOR(new_immed) sll 2);
---Jump Adress
-	JumpAddress <= Instr_Addr(31 DOWNTO 28) & shiftleft;
+--Jump Address
+	JumpAddr <= pc_out(31 DOWNTO 28) & shiftleft;
 
--- Branch And Gate
-	BranchAndGate <= BranchOut AND Branch;
---Branch Mux
-	Branch_Mux <= AddALU_Result WHEN (BranchAndGate = '1') ELSE
-		      pc4 WHEN (BranchAndGate = '0');
---Jump Mux
-	New_PC <= Branch_Mux WHEN (JumpOut = '0') ELSE
-		    JumpAddress WHEN (JumpOut = '1');
+-- PCSrc Mux
+	PCSrc_Mux <= ALUresult 	WHEN (PCSrc = "00") ELSE
+		--ALUREG-- 	WHEN (PCSrc = "01") ELSE
+		JumpAddr 	WHEN (PCSrc = "10") ELSE
+		(OTHERS => '0');
 
 END arch;
