@@ -9,7 +9,7 @@ END processor ;
 
 ARCHITECTURE arch OF processor IS
 
-	COMPONENT register IS
+	COMPONENT reg IS
 		PORT (ref_clk: IN STD_LOGIC;
 			reg_reset : 	IN STD_LOGIC;
 			reg_enable:	IN  std_logic;
@@ -20,9 +20,10 @@ ARCHITECTURE arch OF processor IS
 	COMPONENT controller IS
 		PORT (ref_clk, rst : 		IN STD_LOGIC;
 			Funct, OpCode : 	IN STD_LOGIC_VECTOR (5 DOWNTO 0);
-			MemtoReg, MemWrite, MemRead, Branch, ALUSrcA, RegDest, RegWrite, IRWrite, PCWrite, IorD : OUT STD_LOGIC;
+			MemtoReg, MemWrite, MemRead, Branch, ALUSrcA, RegDest,
+			 RegWrite, IRWrite, PCWrite, IorD : OUT STD_LOGIC;
 			ALUSrcB, PCSrc : 	OUT STD_LOGIC_VECTOR (1 DOWNTO 0);
-			ALUControl : 		OUT STD_LOGIC_VECTOR (2 DOWNTO 0);--5 DOWNTO 0);
+			ALUControl : 		OUT STD_LOGIC_VECTOR (5 DOWNTO 0);
 			dsize : 			OUT STD_LOGIC_VECTOR (2 DOWNTO 0));
 	END COMPONENT;
 
@@ -30,6 +31,7 @@ ARCHITECTURE arch OF processor IS
 		PORT (ref_clk, rst : IN STD_LOGIC;
 			addr : IN STD_LOGIC_VECTOR (31 DOWNTO 0);
 			we, IorD : IN STD_LOGIC;
+			dsize : IN STD_LOGIC_VECTOR (2 DOWNTO 0);
 			wd : IN STD_LOGIC_VECTOR (31 DOWNTO 0);
 			rd : OUT STD_LOGIC_VECTOR (31 DOWNTO 0)
 		);
@@ -67,61 +69,74 @@ ARCHITECTURE arch OF processor IS
 			dataO 	: OUT std_logic_vector (31 DOWNTO 0));	
 	END COMPONENT;
 
-	SIGNAL Instr_Addr: STD_LOGIC_VECTOR (31 DOWNTO 0);
+	--SIGNAL Instr_Addr: STD_LOGIC_VECTOR (31 DOWNTO 0);
 
 	SIGNAL Instr : STD_LOGIC_VECTOR (31 DOWNTO 0);
 	SIGNAL OpCode, Funct : STD_LOGIC_VECTOR (5 DOWNTO 0);
 	SIGNAL RS, RT, RD, SHAMT : STD_LOGIC_VECTOR (4 DOWNTO 0);
 	SIGNAL BitImmediate_16 : STD_LOGIC_VECTOR (15 DOWNTO 0);
 
-	SIGNAL MemtoReg, MemWrite, MemRead, Branch, ALUSrc, RegDest, RegWrite, JumpOut : STD_LOGIC;
+	SIGNAL MemtoReg, MemWrite, MemRead, Branch, ALUSrcA, RegDest, RegWrite, IRWrite, PCWrite, IorD: STD_LOGIC;
 	SIGNAL ALUControl : STD_LOGIC_VECTOR (5 DOWNTO 0);
+	SIGNAL ALUSrcB, PCSrc : STD_LOGIC_VECTOR (1 DOWNTO 0);
 	SIGNAL dsize : STD_LOGIC_VECTOR (2 DOWNTO 0);
 
 	SIGNAL RegDest_Mux : STD_LOGIC_VECTOR (4 DOWNTO 0);
-	SIGNAL ALUSrc_Mux, MemtoReg_Mux, Branch_Mux, new_immed : STD_LOGIC_VECTOR (31 DOWNTO 0);
+	SIGNAL ALUSrcB_Mux, MemtoReg_Mux, Branch_Mux, new_immed : STD_LOGIC_VECTOR (31 DOWNTO 0);
 
 	SIGNAL RegOut1, RegOut2, ALUresult, WriteBack : STD_LOGIC_VECTOR (31 DOWNTO 0);
 
 	SIGNAL BranchOut : STD_LOGIC;
 
-	SIGNAL ShiftLeft : STD_LOGIC_VECTOR (27 DOWNTO 0);
-	SIGNAL shiftleft_im : STD_LOGIC_VECTOR (31 DOWNTO 0);
-	SIGNAL AddALU_Result : STD_LOGIC_VECTOR (31 DOWNTO 0);
+	--SIGNAL ShiftLeft : STD_LOGIC_VECTOR (27 DOWNTO 0);
+	SIGNAL shiftleft_imm : STD_LOGIC_VECTOR (31 DOWNTO 0);
+	--SIGNAL AddALU_Result : STD_LOGIC_VECTOR (31 DOWNTO 0);
 	
-	SIGNAL JumpAddress : STD_LOGIC_VECTOR (31 DOWNTO 0);
+	SIGNAL JumpAddr : STD_LOGIC_VECTOR (31 DOWNTO 0);
 
-	-- NEW -- TODO: Organize this
-	SIGNAL New_PC : STD_LOGIC_VECTOR (31 DOWNTO 0) := X"00000000"; -- Initialize to PC = 0
-	SIGNAL pc4 : STD_LOGIC_VECTOR (31 DOWNTO 0);
+	---- NEW -- TODO: Organize this
+	--SIGNAL New_PC : STD_LOGIC_VECTOR (31 DOWNTO 0) := X"00000000"; -- Initialize to PC = 0
+	--SIGNAL pc4 : STD_LOGIC_VECTOR (31 DOWNTO 0);
 	SIGNAL BranchAndGate : STD_LOGIC;
 	SIGNAL A_Reg_out, B_Reg_out : STD_LOGIC_VECTOR (31 DOWNTO 0);
+	SIGNAL PCEn : STD_LOGIC;
+	SIGNAL pc_in, pc_out : STD_LOGIC_VECTOR (31 DOWNTO 0);
+	SIGNAL mem_addr, mem_out : STD_LOGIC_VECTOR (31 DOWNTO 0);
+	SIGNAL Data : STD_LOGIC_VECTOR (31 DOWNTO 0);
+	SIGNAL IorD_Mux : STD_LOGIC_VECTOR (31 DOWNTO 0);
+	SIGNAL ALUOut : STD_LOGIC_VECTOR (31 DOWNTO 0);
+	SIGNAL PCSrc_Mux : STD_LOGIC_VECTOR (31 DOWNTO 0);
+	SIGNAL ALUSrcA_Mux : STD_LOGIC_VECTOR (31 DOWNTO 0);
 
 BEGIN
 ------ CONTROL ------
 -- Controller
-	C1: controller PORT MAP(Funct, OpCode, MemtoReg, MemWrite, MemRead, Branch, ALUSrc, RegDest, RegWrite, JumpOut, ALUControl, dsize);
+	C1: controller PORT MAP(clk, reset, Funct, OpCode, 
+				MemtoReg, MemWrite, MemRead, Branch, 
+				ALUSrcA, RegDest, RegWrite, IRWrite, PCWrite, IorD,
+				ALUSrcB, PCSrc,
+				ALUControl, dsize);
 -- Branch And Gate
 	BranchAndGate <= BranchOut AND Branch;
 
----- TODO PCEn Mux
-
+-- PCEn Mux
+	PCEn <= BranchAndGate AND PCWrite;
 
 ------ DATAPATH ------
 -- Program Counter
-	ProgamCounter : register PORT MAP (clk, reset, PCEn, pc_in, pc_out);
+	ProgamCounter : reg PORT MAP (clk, reset, PCEn, pc_in, pc_out);
 
 -- IorD_Mux
-	mem_addr <= pc_out WHEN IorD = '0' ELSE;
-		 <= PCSrc_Mux WHEN IorD = '1';
+	mem_addr <= pc_out WHEN IorD = '0' ELSE
+		PCSrc_Mux WHEN IorD = '1';
 	
 -- Instr/Data Memory
-	Memory : mem PORT MAP (clk, reset, mem_addr, MemWrite, IorD_Mux,);
+	Memory : mem PORT MAP (clk, reset, mem_addr, MemWrite, IorD, dsize, Data, mem_out);
 
 -- Instruction register
-	Instr_Reg : register PORT MAP (clk, reset, IRWrite, mem_out, Instr);
+	Instr_Reg : reg PORT MAP (clk, reset, IRWrite, mem_out, Instr);
 -- Data register
-	Data_Reg : register PORT MAP (clk, reset, '1', mem_out, Data);
+	Data_Reg : reg PORT MAP (clk, reset, '1', mem_out, Data);
    
 -- Instruction Breakdown
 	OpCode <= Instr(31 DOWNTO 26);
@@ -147,8 +162,8 @@ BEGIN
 		PORT MAP (clk, reset, RegWrite, RS, RT, RegDest_Mux, RegOut1, RegOut2, MemToReg_Mux);
 
 ------ Double Register TODO
-	A_Reg : register PORT MAP (clk, reset, '1', RegOut1, A_Reg_out);
-	B_Reg : register PORT MAP (clk, reset, '1', RegOut2, B_Reg_out);
+	A_Reg : reg PORT MAP (clk, reset, '1', RegOut1, A_Reg_out);
+	B_Reg : reg PORT MAP (clk, reset, '1', RegOut2, B_Reg_out);
 
 -- Sign Extend
 	Sign_Expand: FOR i IN 0 TO 31 GENERATE
@@ -176,7 +191,10 @@ BEGIN
 		shiftleft_imm 				WHEN (ALUSrcB = "11");
 
 -- ALU
-	A1 : alu PORT MAP (ALUControl, SHAMT, RegOut1, ALUSrc_Mux, ALUresult, BranchOut);
+	A1 : alu PORT MAP (ALUControl, SHAMT, RegOut1, ALUSrcB_Mux, ALUresult, BranchOut);
+
+-- ALU Reg
+	ALU_Reg : reg PORT MAP (clk, reset, '1', ALUresult, ALUOut);
 
 -- Jump Address
 	JumpAddr <= pc_out(31 DOWNTO 28) & Instr(25 DOWNTO 0) & "00";

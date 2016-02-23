@@ -2,16 +2,16 @@ LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
 USE IEEE.numeric_std.ALL;
 
-ENTITY register IS
+ENTITY reg IS
 	PORT (ref_clk: 	IN 	std_logic;
 		reg_reset: 	IN 	std_logic;
 		reg_enable:	IN  std_logic;
 		data_in: 	IN 	std_logic_vector (31 DOWNTO 0);
 		data_out: 	OUT std_logic_vector (31 DOWNTO 0)
 	);
-END register;
+END reg;
 
-ARCHITECTURE arch OF register IS
+ARCHITECTURE arch OF reg IS
 BEGIN
 	PROCESS (ref_clk) -- Don't need asynchronous reset, so only sensitive to ref_clk
 	BEGIN
