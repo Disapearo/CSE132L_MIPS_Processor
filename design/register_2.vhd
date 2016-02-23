@@ -11,7 +11,7 @@ ENTITY register_2 IS
 	);
 END register_2;
 
-ARCHITECTURE arch OF register IS
+ARCHITECTURE arch OF register_2 IS
 BEGIN
 	PROCESS (ref_clk) -- Don't need asynchronous reset, so only sensitive to ref_clk
 	BEGIN
