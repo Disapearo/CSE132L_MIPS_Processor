@@ -88,15 +88,11 @@ ARCHITECTURE arch OF processor IS
 
 	SIGNAL BranchOut : STD_LOGIC;
 
-	--SIGNAL ShiftLeft : STD_LOGIC_VECTOR (27 DOWNTO 0);
 	SIGNAL shiftleft_imm : STD_LOGIC_VECTOR (31 DOWNTO 0);
-	--SIGNAL AddALU_Result : STD_LOGIC_VECTOR (31 DOWNTO 0);
 	
 	SIGNAL JumpAddr : STD_LOGIC_VECTOR (31 DOWNTO 0);
 
 	---- NEW -- TODO: Organize this
-	--SIGNAL New_PC : STD_LOGIC_VECTOR (31 DOWNTO 0) := X"00000000"; -- Initialize to PC = 0
-	--SIGNAL pc4 : STD_LOGIC_VECTOR (31 DOWNTO 0);
 	SIGNAL BranchAndGate : STD_LOGIC;
 	SIGNAL A_Reg_out, B_Reg_out : STD_LOGIC_VECTOR (31 DOWNTO 0);
 	SIGNAL PCEn : STD_LOGIC;
@@ -201,7 +197,7 @@ BEGIN
 
 -- PCSrc Mux
 	PCSrc_Mux <= ALUresult 	WHEN (PCSrc = "00") ELSE
-		--ALUREG-- 	WHEN (PCSrc = "01") ELSE
+		ALUOut 	WHEN (PCSrc = "01") ELSE
 		JumpAddr 	WHEN (PCSrc = "10") ELSE
 		(OTHERS => '0');
 
