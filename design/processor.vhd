@@ -95,7 +95,7 @@ ARCHITECTURE arch OF processor IS
 	SIGNAL New_PC : STD_LOGIC_VECTOR (31 DOWNTO 0) := X"00000000"; -- Initialize to PC = 0
 	SIGNAL pc4 : STD_LOGIC_VECTOR (31 DOWNTO 0);
 	SIGNAL BranchAndGate : STD_LOGIC;
-	SIGNAL regA_out, regB_out : STD_LOGIC_VECTOR (31 DOWNTO 0);
+	SIGNAL A_Reg_out, B_Reg_out : STD_LOGIC_VECTOR (31 DOWNTO 0);
 
 BEGIN
 ------ CONTROL ------
@@ -147,7 +147,8 @@ BEGIN
 		PORT MAP (clk, reset, RegWrite, RS, RT, RegDest_Mux, RegOut1, RegOut2, MemToReg_Mux);
 
 ------ Double Register TODO
-	AB_Reg : register_2 PORT MAP (clk, reset, '1', RegOut1, RegOut2, regA_out, regB_out);
+	A_Reg : register PORT MAP (clk, reset, '1', RegOut1, A_Reg_out);
+	B_Reg : register PORT MAP (clk, reset, '1', RegOut2, B_Reg_out);
 
 -- Sign Extend
 	Sign_Expand: FOR i IN 0 TO 31 GENERATE
@@ -167,9 +168,9 @@ BEGIN
 
 -- ALUSrcA Mux
 	ALUSrcA_Mux <= pc_out 	WHEN (ALUSrcA = '0') ELSE
-				regA_out  	WHEN (ALUSrcA = '1');
+				A_Reg_out  	WHEN (ALUSrcA = '1');
 -- ALUSrcB Mux
-	ALUSrcB_Mux <= regB_out 		WHEN (ALUSrcB = "00") ELSE
+	ALUSrcB_Mux <= B_Reg_out 		WHEN (ALUSrcB = "00") ELSE
 		(0=>'1', OTHERS => '0') 	WHEN (ALUSrcB = "01") ELSE
 		new_immed 					WHEN (ALUSrcB = "10") ELSE
 		shiftleft_imm 				WHEN (ALUSrcB = "11");
