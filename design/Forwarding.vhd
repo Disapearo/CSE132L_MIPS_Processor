@@ -1,0 +1,26 @@
+LIBRARY ieee;
+USE ieee.std_logic_1164.ALL;
+
+ENTITY controller IS
+	PORT (ID_EX_Rs, ID_EX_Rt : IN STD_LOGIC_VECTOR (5 DOWNTO 0);
+		EX_MEM_Rs, EX_MEM_Rt : IN STD_LOGIC_VECTOR(5 DOWNTO 0);
+		EX_MEM_RegWrite : IN STD_LOGIC;
+		MEM_WB_Rs, MEM_WB_Rt: IN STD_LOGIC_VECTOR (5 DOWNTO 0);
+		MEM_WB_RegWrite : IN STD_LOGIC;
+		ALUSrcA, ALUSrcB : OUT STD_LOGIC_VECTOR (2 DOWNTO 0));
+END controller;
+
+ARCHITECTURE arch OF controller IS
+
+BEGIN
+	ALUSrcA <= "10" WHEN (EX_MEM_RegWrite = '1' AND EX_MEM_Rd /= "00000" AND EX_MEM_Rd = ID_EX_Rs) ELSE
+		   "01" WHEN (MEM_WB_RegWrite = '1' AND MEM_WB_Rd /= "00000" AND MEM_WB_Rd = ID_EX_Rs
+			AND NOT(EX_MEM_RegWrite = '1' AND EX_MEM_Rd /= "00000" AND EX_MEM_Rd = ID_EX_Rs)) ELSE
+		   "00";
+	ALUSrcA <= "10" WHEN (EX_MEM_RegWrite = '1' AND EX_MEM_Rd /= "00000" AND EX_MEM_Rd = ID_EX_Rt) ELSE
+		   "01" WHEN (MEM_WB_RegWrite = '1' AND MEM_WB_Rd /= "00000" AND MEM_WB_Rd = ID_EX_Rt
+			AND NOT(EX_MEM_RegWrite = '1' AND EX_MEM_Rd /= "00000" AND EX_MEM_Rd = ID_EX_Rt)) ELSE
+		   "00";
+
+
+END arch;
