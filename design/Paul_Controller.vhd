@@ -40,7 +40,7 @@ BEGIN --Synchronous Output, so a lot of temp signals
 			RegWrite 	<= temp_RegW;
 			IRWrite 	<= temp_IRW;
 			PCSrc 		<= temp_PCSrc;
-			PCWrite 	<= temp_PCWrite;
+			PCWrite 	<= temp_PCW;
 			IorD 		<= temp_IorD;
 			ALUControl 	<= temp_ALUControl;
 			dsize 		<= temp_dsize;
