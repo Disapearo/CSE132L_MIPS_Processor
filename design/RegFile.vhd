@@ -27,16 +27,17 @@ BEGIN
 	PROCESS (ref_clk, rst_s, we, raddr_1, raddr_2, waddr) 
 	BEGIN
 		--WAIT ON ref_clk, rst_s, we, raddr_1, raddr_2, waddr; -- CAN'T SYNTHESIZE THIS!
-		IF (ref_clk'EVENT and ref_clk = '1') THEN
+		IF (ref_clk = '1') THEN
 			IF (rst_s = '1') THEN
 				regarray <= (OTHERS => (OTHERS => '0'));
 			ELSIF (we = '1') THEN
 				regarray(TO_INTEGER(UNSIGNED(waddr))) <= wdata;
 			END IF;
+--		END IF;
+		ELSIF (ref_clk = '0') THEN
+			rdata_1 <= regarray(TO_INTEGER(UNSIGNED(raddr_1)));
+			rdata_2 <= regarray(TO_INTEGER(UNSIGNED(raddr_2)));
 		END IF;
-
-		rdata_1 <= regarray(TO_INTEGER(UNSIGNED(raddr_1)));
-		rdata_2 <= regarray(TO_INTEGER(UNSIGNED(raddr_2)));
 
 	END PROCESS;
 END arch;

@@ -139,6 +139,126 @@ BEGIN
 		reset_tb <= '0';
 		wait for 100 ns;
 
+		clk_tb <= '0';		-- 16
+		reset_tb <= '0';
+		wait for 100 ns;
+
+		clk_tb <= '1';
+		reset_tb <= '0';
+		wait for 100 ns;
+
+		clk_tb <= '0';		-- 17
+		reset_tb <= '0';
+		wait for 100 ns;
+
+		clk_tb <= '1';
+		reset_tb <= '0';
+		wait for 100 ns;
+
+		clk_tb <= '0';		-- 18
+		reset_tb <= '0';
+		wait for 100 ns;
+
+		clk_tb <= '1';
+		reset_tb <= '0';
+		wait for 100 ns;
+
+		clk_tb <= '0';		-- 19
+		reset_tb <= '0';
+		wait for 100 ns;
+
+		clk_tb <= '1';
+		reset_tb <= '0';
+		wait for 100 ns;
+
+		clk_tb <= '0';		-- 20
+		reset_tb <= '0';
+		wait for 100 ns;
+
+		clk_tb <= '1';
+		reset_tb <= '0';
+		wait for 100 ns;
+
+		clk_tb <= '0';		-- 21
+		reset_tb <= '0';
+		wait for 100 ns;
+
+		clk_tb <= '1';
+		reset_tb <= '0';
+		wait for 100 ns;
+
+		clk_tb <= '0';		-- 22
+		reset_tb <= '0';
+		wait for 100 ns;
+
+		clk_tb <= '1';
+		reset_tb <= '0';
+		wait for 100 ns;
+
+		clk_tb <= '0';		-- 23
+		reset_tb <= '0';
+		wait for 100 ns;
+
+		clk_tb <= '1';
+		reset_tb <= '0';
+		wait for 100 ns;
+
+		clk_tb <= '0';		-- 24
+		reset_tb <= '0';
+		wait for 100 ns;
+
+		clk_tb <= '1';
+		reset_tb <= '0';
+		wait for 100 ns;
+
+		clk_tb <= '0';		-- 25
+		reset_tb <= '0';
+		wait for 100 ns;
+
+		clk_tb <= '1';
+		reset_tb <= '0';
+		wait for 100 ns;
+
+		clk_tb <= '0';		-- 26
+		reset_tb <= '0';
+		wait for 100 ns;
+
+		clk_tb <= '1';
+		reset_tb <= '0';
+		wait for 100 ns;
+
+		clk_tb <= '0';		-- 27
+		reset_tb <= '0';
+		wait for 100 ns;
+
+		clk_tb <= '1';
+		reset_tb <= '0';
+		wait for 100 ns;
+
+		clk_tb <= '0';		-- 28
+		reset_tb <= '0';
+		wait for 100 ns;
+
+		clk_tb <= '1';
+		reset_tb <= '0';
+		wait for 100 ns;
+
+		clk_tb <= '0';		-- 29
+		reset_tb <= '0';
+		wait for 100 ns;
+
+		clk_tb <= '1';
+		reset_tb <= '0';
+		wait for 100 ns;
+
+		clk_tb <= '0';		-- 30
+		reset_tb <= '0';
+		wait for 100 ns;
+
+		clk_tb <= '1';
+		reset_tb <= '0';
+		wait for 100 ns;
+
 --		clk_tb <= '0';		-- Reset
 --		reset_tb <= '1';
 --		wait for 100 ns;
