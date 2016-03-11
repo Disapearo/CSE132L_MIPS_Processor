@@ -182,8 +182,8 @@ BEGIN
 	IMEM_1 : synth_imem PORT MAP(Instr_Addr(5 DOWNTO 0), Instr);	-- Synthesis version
 
 ---------- IF/ID ---------- Instr, PC4
-	IF_ID(0) <= pc4 WHEN (rising_edge(clk) AND IF_ID_Write = '1');-- ELSE (OTHERS => '0') WHEN (BranchAndGate = '1' AND IF_ID_Write = '0');
-	IF_ID(1) <= Instr WHEN (rising_edge(clk) AND IF_ID_Write = '1');-- ELSE (OTHERS => '0') WHEN (BranchAndGate = '1' AND IF_ID_Write = '0');
+	IF_ID(0) <= pc4 WHEN (rising_edge(clk) AND IF_ID_Write = '1') ELSE (OTHERS => '0') WHEN (rising_edge(clk)) AND (BranchAndGate = '1' AND IF_ID_Write = '0');
+	IF_ID(1) <= Instr WHEN (rising_edge(clk) AND IF_ID_Write = '1') ELSE (OTHERS => '0') WHEN (rising_edge(clk)) AND (BranchAndGate = '1' AND IF_ID_Write = '0');
 
 ---------- ID ---------- RegFile, Sign Extend, Controller, Shift Left 2
 -- Instruction Breakdown
