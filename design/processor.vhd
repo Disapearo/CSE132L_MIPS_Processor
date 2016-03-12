@@ -182,8 +182,12 @@ BEGIN
 	IMEM_1 : synth_imem PORT MAP(Instr_Addr(5 DOWNTO 0), Instr);	-- Synthesis version
 
 ---------- IF/ID ---------- Instr, PC4
-	IF_ID(0) <= pc4 WHEN (rising_edge(clk) AND IF_ID_Write = '1') ELSE (OTHERS => '0') WHEN (rising_edge(clk)) AND (BranchAndGate = '1' AND IF_ID_Write = '0');
-	IF_ID(1) <= Instr WHEN (rising_edge(clk) AND IF_ID_Write = '1') ELSE (OTHERS => '0') WHEN (rising_edge(clk)) AND (BranchAndGate = '1' AND IF_ID_Write = '0');
+--	IF_ID(0) <= pc4 WHEN (rising_edge(clk) AND IF_ID_Write = '1') ELSE (OTHERS => '0') WHEN (rising_edge(clk)) AND (BranchAndGate = '1');-- AND IF_ID_Write = '0');
+--	IF_ID(1) <= Instr WHEN (rising_edge(clk) AND IF_ID_Write = '1') ELSE (OTHERS => '0') WHEN (rising_edge(clk)) AND (BranchAndGate = '1');-- AND IF_ID_Write = '0');
+	IF_ID(0) <= (OTHERS => '0') WHEN (rising_edge(clk)) AND ((BranchAndGate = '1') OR (JumpOut = '1')) ELSE pc4 WHEN (rising_edge(clk) AND IF_ID_Write = '1');-- AND IF_ID_Write = '0');
+	IF_ID(1) <= (OTHERS => '0') WHEN (rising_edge(clk)) AND ((BranchAndGate = '1') OR (JumpOut = '1')) ELSE Instr WHEN (rising_edge(clk) AND IF_ID_Write = '1');-- AND IF_ID_Write = '0');
+
+
 
 ---------- ID ---------- RegFile, Sign Extend, Controller, Shift Left 2
 -- Instruction Breakdown
@@ -216,11 +220,11 @@ BEGIN
 
 	END GENERATE Sign_Expand;
 -- Shift Left 2 Immediate
-	shiftleft_im <= TO_STDLOGICVECTOR(TO_BITVECTOR(ID_EX(13)) sll 2);	-- new_immed
+--	shiftleft_im <= TO_STDLOGICVECTOR(TO_BITVECTOR(ID_EX(13)) sll 2);	-- new_immed
 -- Normal Adder
 	NormAdder: adder
 		GENERIC MAP(32)
-		PORT MAP(ID_EX(0), shiftleft_im, AddALU_Result);			-- PC4
+		PORT MAP(ID_EX(0), new_immed, AddALU_Result); -- PORT MAP(ID_EX(0), shiftleft_im, AddALU_Result);			-- PC4
 -- Compare1_Mux
 	Compare1_MUX <= RegOut1 WHEN (IDRegDataA = '0') ELSE
 			EX_Mem(8) WHEN (IDRegDataA = '1');		-- ALUresult
