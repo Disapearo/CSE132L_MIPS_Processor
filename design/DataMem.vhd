@@ -37,6 +37,7 @@ BEGIN
 			END IF;
 		--ELSIF (falling_edge(ref_clk) AND (re = '1')) THEN
 		--END IF;
+		ELSIF (ref_clk'EVENT AND ref_clk = '0') THEN
 			IF (re = '1') THEN											-- LOAD
 	--			IF (dsize = "011") THEN										-- LW only
 	--			        dataO <= dataMemory(to_integer(unsigned(addr)));
