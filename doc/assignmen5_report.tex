@@ -93,25 +93,29 @@ After decoding the instructions, we worked out the theoretical state of the Regi
 Each of the pipeline stages, hazards, forwarding, and stalls were correctly implemented. The instruction values shown in each cycle correlate to the instruction in the ID stage, while other various signals indicate the values for other instructions in different stages; for example, ALUresult outputs the evaluated ALU value from the EX stage. The pipeline registers indicate the transition of each instruction into the next stage.
 
 \section{Synthesis}
-Through synthesis, we were able to determine the power consumption, area requirements, and frequency of our processor design. Synopsis, a software suite provided by our university, was used to perform synthesis on our design. After adjusting the analysis, elaboration, and synthesis files and scripts, we synthesized our processor design and successfully generated various reports on our processor's performance. // TO DO: FIX THIS STUFF
+Through synthesis, we were able to determine the power consumption, area requirements, and frequency of our processor design. Synopsis, a software suite provided by our university, was used to perform synthesis on our design. After adjusting the analysis, elaboration, and synthesis files and scripts, we synthesized our processor design and successfully generated various reports on our processor's performance.
 
 \subsection{Power Consumption}
-Our processor's total power consumption came out to 20.3 mW. From the power hierarchy we generated, approximately 74\% of the power consumption is due to our register file component, with another 19.9\% being used by the ALU. All other components use three orders of magnitude less power.
+Our processor's total power consumption came out to 18.7 mW, down from 20.3  mW in our Single-Cycle Processor. From the power hierarchy we generated. Our Register File consumes approximately 57.7\% of the power, which is down from the 74\% it consumed in our single-clycle processor. The ALU was the only other component that consumed a significant amount of power. At 13.3\%, it consumed 6.8\% less than it did in our single cycle processor. All other components use three orders of magnitude less power.
+
+\includegraphics[width=0.8\textwidth]{reportPower.png} \\
 
 \subsection{Area}
-After reading the generated area reports, we could not determine the units being used in the report. However, Synopsys reported that our Design area would be 82228.100300, with a Combinational Area of approximately 16868. We achieved these results using Professor Yaghini's SRAM. However, when using our Data Memory component (written in VHDL), our Combinational Area was over twice as large.
+After reading the generated area reports, we could not determine the units being used in the report. However, Synopsys reported that our Design area would be 25485.282135, down from 82228.100300 in our Single-Cycle Processor, with a Combinational Area of approximately 10926, which is 5942 less than before. These results are from our own Data Memory component, not using Professor Yaghini's SRAM. Were it tested with the Professor's SRAM, the area would likely be half the size.
 
 \subsection{Required Frequency}
-According to the generated timing report, our Critical Path Length was 3.18 ns. In order to accommodate this and eliminate negative slack, we raised our clock period from 2.0 ns to 3.2 ns. This results in a frequency of approximately 312.5 MHz.
+According to the generated timing report, our Critical Path Length was .27, which is a significant improvement over the 3.18 ns taken by our Single-Cycle Processor. This allowed us to decrease our clock period from 3.2 ns to 1 ns and still have no negative slack. This results in a frequency of approximately 100 
+MHz.
 
-The majority of our timing delay comes from our PC adder, accounting for approximately 2.25 ns of the critical path length. We expect to see a reduction in the critical path in future labs, where our Adder components will not be required.
+\includegraphics[scale=.5]{reportQor.png}\\
 
 \section{Known Issues} 
 Due to our unfamiliarity with SystemVerilog, we chose not to use the testbench to preload instruction memory. For the Questasim simulation, we read the example program instructions from a file.  For synthesis, we created a second version of instruction memory that has instructions preloaded into memory in order to synthesize the Processor properly.
 \\
+
 \section{Conclusion}
 
-As a complete single-cycle processor, our project now supports a larger subset of the full MIPS instruction set. It is capable of all three types of MIPS instructions: R-type, I-type, and J-type. Through synthesis, we were able to determine the area, power and frequency properties our processor design would have if fabricated. Finally, with this complete processor, we should be well prepared to implement pipelining in our future assignment. //TO DO: WRITE...
+As a complete pipeline processor, our project now supports the full MIPS instruction set. It is capable of all three types of MIPS instructions: R-type, I-type, and J-type. Unlike our single cycle processor, however, it now has a better throughput and can implement forwarding, stalling, and hazard detection. Through synthesis, we were able to determine the area, power and frequency properties our processor design would have if fabricated.
 
 
 \end{document}

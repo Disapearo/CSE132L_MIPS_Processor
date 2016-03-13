@@ -7,7 +7,7 @@
 set PROJECT_NAME                "MIPSProcessor_Synthesis"
 set TOP                         "processor"
 set FILES                       "files_mips"
-set clock_period                3.2
+set clock_period                1
 
 #==============================================================================
 ##                  D I R E C T O R Y   S T R U C T U R E

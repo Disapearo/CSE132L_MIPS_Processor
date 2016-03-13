@@ -143,7 +143,7 @@ ARCHITECTURE arch OF processor IS
 	SIGNAL shiftleft_im : STD_LOGIC_VECTOR (31 DOWNTO 0);
 	SIGNAL AddALU_Result : STD_LOGIC_VECTOR (31 DOWNTO 0);
 	
-	SIGNAL JumpAddress : STD_LOGIC_VECTOR (31 DOWNTO 0) := (OTHERS => '0');
+	SIGNAL JumpAddress : STD_LOGIC_VECTOR (31 DOWNTO 0); --:= (OTHERS => '0');
 
 	TYPE pipelineRegisterIF_ID IS ARRAY (0 TO 1) OF STD_LOGIC_VECTOR (31 DOWNTO 0);		-- Instr, PC4
 	SIGNAL IF_ID : pipelineRegisterIF_ID;
@@ -159,7 +159,7 @@ ARCHITECTURE arch OF processor IS
 
 
 	-- NEW -- TODO: Organize this
-	SIGNAL New_PC : STD_LOGIC_VECTOR (31 DOWNTO 0) := (OTHERS => '0'); -- Initialize to PC = 0
+	SIGNAL New_PC : STD_LOGIC_VECTOR (31 DOWNTO 0); -- := (OTHERS => '0'); -- Initialize to PC = 0
 	SIGNAL pc4 : STD_LOGIC_VECTOR (31 DOWNTO 0);
 	SIGNAL BranchAndGate : STD_LOGIC;
 
@@ -184,10 +184,32 @@ BEGIN
 ---------- IF/ID ---------- Instr, PC4
 --	IF_ID(0) <= pc4 WHEN (rising_edge(clk) AND IF_ID_Write = '1') ELSE (OTHERS => '0') WHEN (rising_edge(clk)) AND (BranchAndGate = '1');-- AND IF_ID_Write = '0');
 --	IF_ID(1) <= Instr WHEN (rising_edge(clk) AND IF_ID_Write = '1') ELSE (OTHERS => '0') WHEN (rising_edge(clk)) AND (BranchAndGate = '1');-- AND IF_ID_Write = '0');
-	IF_ID(0) <= (OTHERS => '0') WHEN (rising_edge(clk)) AND ((BranchAndGate = '1') OR (JumpOut = '1')) ELSE pc4 WHEN (rising_edge(clk) AND IF_ID_Write = '1');-- AND IF_ID_Write = '0');
-	IF_ID(1) <= (OTHERS => '0') WHEN (rising_edge(clk)) AND ((BranchAndGate = '1') OR (JumpOut = '1')) ELSE Instr WHEN (rising_edge(clk) AND IF_ID_Write = '1');-- AND IF_ID_Write = '0');
+
+	PROCESS (clk, BranchAndGate, JumpOut, IF_ID_Write)
+
+	BEGIN
+
+		IF (rising_edge(clk)) THEN
+			IF (BranchAndGate = '1' OR JumpOut = '1') THEN
+				IF_ID(0) <= (OTHERS => '0');
+				IF_ID(1) <= (OTHERS => '0');
+			ELSIF (IF_ID_Write = '1') THEN
+				IF_ID(0) <= pc4;
+				IF_ID(1) <= Instr;
+			END IF;
+		END IF;
+
+	END PROCESS;
 
 
+--	IF_ID(0) <= (OTHERS => '0') WHEN (rising_edge(clk)) AND ((BranchAndGate = '1') OR (JumpOut = '1')) ELSE pc4;
+--	IF_ID(0) <= pc4 WHEN (rising_edge(clk) AND IF_ID_Write = '1' AND BranchAndGate = '0' AND JumpOut = '1');
+--	IF_ID(0) <= pc4 WHEN (rising_edge(clk) AND IF_ID_Write = '1' AND BranchAndGate = '0');
+--	IF_ID(1) <= (OTHERS => '0') WHEN (rising_edge(clk)) AND ((BranchAndGate = '1') OR (JumpOut = '1')) ELSE Instr;
+--	IF_ID(1) <= Instr WHEN (rising_edge(clk) AND IF_ID_Write = '1'AND BranchandGate = '0');
+
+--	IF_ID(0) <= (OTHERS => '0') WHEN (rising_edge(clk)) AND ((BranchAndGate = '1') OR (JumpOut = '1')) ELSE pc4 WHEN (rising_edge(clk) AND IF_ID_Write = '1');-- AND IF_ID_Write = '0');
+--	IF_ID(1) <= (OTHERS => '0') WHEN (rising_edge(clk)) AND ((BranchAndGate = '1') OR (JumpOut = '1')) ELSE Instr WHEN (rising_edge(clk) AND IF_ID_Write = '1');-- AND IF_ID_Write = '0');
 
 ---------- ID ---------- RegFile, Sign Extend, Controller, Shift Left 2
 -- Instruction Breakdown

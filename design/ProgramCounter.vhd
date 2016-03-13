@@ -12,11 +12,17 @@ ENTITY PC IS
 END PC;
 
 ARCHITECTURE arch OF PC IS
-	--SIGNAL stored_pc : std_logic_vector(31 downto 0) := (OTHERS => '0');
+--	SIGNAL stored_pc : std_logic_vector(31 downto 0) := (OTHERS => '0');
 BEGIN
-	PROCESS (ref_clk) -- Don't need asynchronous reset, so only sensitive to ref_clk
-		VARIABLE stored_pc : std_logic_vector(31 downto 0) := (OTHERS => '0');
+	P1: PROCESS (ref_clk) -- Don't need asynchronous reset, so only sensitive to ref_clk
+		VARIABLE stored_pc : std_logic_vector(31 downto 0); -- := (OTHERS => '0');
+		VARIABLE temp : std_logic;
 	BEGIN
+
+		IF (pc_in = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX") THEN
+			stored_pc := (OTHERS => '0');
+		END IF;
+
 		IF (ref_clk'EVENT and ref_clk = '1') THEN
 			IF (pc_reset = '1') THEN
 				stored_pc := (OTHERS=>'0');
@@ -26,8 +32,15 @@ BEGIN
 --				stored_pc := pc_in;
 --				pc_out <= pc_in;
 			END IF;
-		ELSIF (ref_clk'EVENT and ref_clk = '0') THEN
+			temp := '1';
+		END IF;
+--		ELSIF (ref_clk'EVENT and ref_clk = '0') THEN
+
+--		IF (ref_clk'EVENT AND ref_clk = '0') THEN
+--		ELSE
+		IF (temp /= '1') THEN
 			stored_pc := pc_in;
 		END IF;
+		temp := '0';
 	END PROCESS;
 END arch;
